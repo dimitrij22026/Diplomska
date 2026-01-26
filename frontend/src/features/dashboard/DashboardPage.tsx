@@ -96,8 +96,8 @@ export const DashboardPage = () => {
       en: `Fair financial month, ${topCategory}`
     },
     critical: {
-      mk: `Предупредување: Потребна е внимание на ${topCategory}`,
-      en: `Warning: Attention needed on ${topCategory}`
+      mk: `Предупредување: Внимание на трошок - ${topCategory}`,
+      en: `Warning: Attention needed on expense - ${topCategory}`
     }
   }
 
