@@ -39,11 +39,11 @@ const InvestmentCalculator = () => {
     { id: "custom", name: language === "mk" ? "Прилагодено" : "Custom", avgReturn: 7 },
   ]
 
-  const [selectedType, setSelectedType] = useState("etf")
+  const [selectedType, setSelectedType] = useState("stocks")
   const [investment, setInvestment] = useState({
-    initialAmount: "1000",
-    monthlyContribution: "100",
-    annualReturn: "8",
+    initialAmount: "10000",
+    monthlyContribution: "10000",
+    annualReturn: "10",
     years: "10",
   })
 
