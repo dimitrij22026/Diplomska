@@ -1,0 +1,97 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
+:root {
+  font-family: "Space Grotesk", "DM Sans", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  color: #f6f7fb;
+  background-color: #050915;
+  --bg: #050915;
+  --bg-alt: #070f1f;
+  --surface: rgba(255, 255, 255, 0.04);
+  --card: rgba(7, 10, 24, 0.85);
+  --card-strong: rgba(10, 14, 35, 0.95);
+  --text: #f6f7fb;
+  --muted: #9ca0b5;
+  --border: rgba(255, 255, 255, 0.08);
+  --accent: #ffb677;
+  --accent-strong: #ff6f61;
+  --accent-alt: #4cb8ff;
+  --positive: #22c55e;
+  --negative: #fb7185;
+  --glass: rgba(30, 41, 59, 0.85);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(120% 120% at 0% 0%, #0b122a 0%, #050915 55%, #03050d 100%);
+  color: var(--text);
+  position: relative;
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+body::before {
+  background: radial-gradient(circle at 10% 20%, rgba(255, 111, 97, 0.35), transparent 45%),
+    radial-gradient(circle at 80% 0%, rgba(79, 209, 255, 0.25), transparent 40%);
+  filter: blur(120px);
+}
+
+body::after {
+  background: radial-gradient(circle at 70% 80%, rgba(255, 182, 119, 0.3), transparent 45%);
+  filter: blur(160px);
+}
+
+#root {
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+}
+
+.page-centered {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  text-align: center;
+  color: var(--muted);
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.12);
+  border-top-color: var(--accent);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

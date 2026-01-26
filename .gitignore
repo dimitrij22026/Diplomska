@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.egg-info/
+.eggs/
+.venv/
+venv/
+.env
+.env.*
+
+# Node/Frontend
+node_modules/
+dist/
+build/
+*.log
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Coverage / Reports
+htmlcov/
+coverage.xml
+*.cover
+*.py,cover
+*.lcov
+
+# Misc
+*.sqlite3

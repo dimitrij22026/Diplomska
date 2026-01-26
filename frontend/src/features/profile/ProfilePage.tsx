@@ -1,0 +1,350 @@
+import { useState } from "react"
+import type { FormEvent } from "react"
+import { User, Lock, Mail, Calendar, Wallet, AlertTriangle, RefreshCw } from "lucide-react"
+
+import { useAuth } from "../../hooks/useAuth"
+import { apiClient } from "../../api/client"
+import { useLanguage } from "../../i18n"
+
+// Format date based on language
+const formatDate = (dateString: string, lang: string): string => {
+  const date = new Date(dateString)
+  const day = String(date.getDate()).padStart(2, "0")
+  const month = String(date.getMonth() + 1).padStart(2, "0")
+  const year = date.getFullYear()
+  return lang === "mk" ? `${day}.${month}.${year}` : `${month}/${day}/${year}`
+}
+
+const SUPPORTED_CURRENCIES = ["EUR", "USD", "MKD", "GBP", "CHF"]
+
+export const ProfilePage = () => {
+  const { user, token, refreshUser } = useAuth()
+  const { language, t } = useLanguage()
+  const [isChangingPassword, setIsChangingPassword] = useState(false)
+  const [isChangingCurrency, setIsChangingCurrency] = useState(false)
+  const [selectedCurrency, setSelectedCurrency] = useState(user?.currency ?? "EUR")
+  const [convertValues, setConvertValues] = useState(true)
+  const [passwordForm, setPasswordForm] = useState({
+    current_password: "",
+    new_password: "",
+    confirm_password: "",
+  })
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [resendingEmail, setResendingEmail] = useState(false)
+  const [currencyLoading, setCurrencyLoading] = useState(false)
+
+  const handlePasswordChange = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setError(null)
+    setSuccess(null)
+
+    if (passwordForm.new_password !== passwordForm.confirm_password) {
+      setError(t("passwordsDontMatch"))
+      return
+    }
+
+    if (passwordForm.new_password.length < 8) {
+      setError(t("passwordTooShort"))
+      return
+    }
+
+    setIsLoading(true)
+    try {
+      await apiClient.post(
+        "/users/me/change-password",
+        {
+          current_password: passwordForm.current_password,
+          new_password: passwordForm.new_password,
+        },
+        { token: token ?? undefined }
+      )
+      setSuccess(t("passwordChanged"))
+      setPasswordForm({ current_password: "", new_password: "", confirm_password: "" })
+      setIsChangingPassword(false)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("saveFailed"))
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleResendVerification = async () => {
+    if (!user?.email) return
+    setResendingEmail(true)
+    try {
+      await apiClient.post("/auth/resend-verification", { email: user.email })
+      setSuccess(language === "mk" ? "Нов email за верификација е испратен!" : "Verification email sent!")
+    } catch {
+      setError(t("saveFailed"))
+    } finally {
+      setResendingEmail(false)
+    }
+  }
+
+  const handleCurrencyChange = async () => {
+    if (selectedCurrency === user?.currency) {
+      setIsChangingCurrency(false)
+      return
+    }
+    
+    setError(null)
+    setSuccess(null)
+    setCurrencyLoading(true)
+    
+    try {
+      const result = await apiClient.post<{
+        success: boolean
+        old_currency: string
+        new_currency: string
+        transactions_converted: number
+        budgets_converted: number
+        message: string
+      }>(
+        "/users/me/change-currency",
+        {
+          new_currency: selectedCurrency,
+          convert_values: convertValues,
+        },
+        { token: token ?? undefined }
+      )
+      
+      // Refresh user data
+      if (refreshUser) {
+        await refreshUser()
+      }
+      
+      const conversionMsg = convertValues && (result.transactions_converted > 0 || result.budgets_converted > 0)
+        ? language === "mk"
+          ? ` Конвертирани: ${result.transactions_converted} трансакции, ${result.budgets_converted} буџети.`
+          : ` Converted: ${result.transactions_converted} transactions, ${result.budgets_converted} budgets.`
+        : ""
+      
+      setSuccess(
+        language === "mk"
+          ? `Валутата е променета од ${result.old_currency} во ${result.new_currency}.${conversionMsg}`
+          : `Currency changed from ${result.old_currency} to ${result.new_currency}.${conversionMsg}`
+      )
+      setIsChangingCurrency(false)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("saveFailed"))
+    } finally {
+      setCurrencyLoading(false)
+    }
+  }
+
+  if (!user) {
+    return (
+      <div className="page-centered">
+        <div className="loader" />
+      </div>
+    )
+  }
+
+  return (
+    <section>
+      <div className="dashboard__header">
+        <div>
+          <p className="eyebrow">{t("yourProfile")}</p>
+          <h1 className="hero-title">{t("profileSettings")}</h1>
+        </div>
+      </div>
+
+      {!user.is_email_verified && (
+        <div className="verification-banner">
+          <AlertTriangle size={20} />
+          <div>
+            <strong>{t("emailNotVerified")}</strong>
+            <p>{t("checkInbox")}</p>
+          </div>
+          <button
+            className="secondary-button"
+            onClick={handleResendVerification}
+            disabled={resendingEmail}
+          >
+            {resendingEmail ? t("sending") : t("resend")}
+          </button>
+        </div>
+      )}
+
+      <div className="profile-grid">
+        {/* User Info Card */}
+        <div className="panel profile-card">
+          <div className="profile-avatar">
+            <User size={48} />
+          </div>
+          <h2 className="profile-name">{user.full_name || (language === "mk" ? "Корисник" : "User")}</h2>
+          <p className="profile-email">{user.email}</p>
+
+          <div className="profile-details">
+            <div className="profile-detail-item">
+              <Mail size={18} />
+              <div>
+                <span className="detail-label">{t("email")}</span>
+                <span className="detail-value">{user.email}</span>
+              </div>
+            </div>
+            <div className="profile-detail-item">
+              <Wallet size={18} />
+              <div>
+                <span className="detail-label">{t("currency")}</span>
+                <span className="detail-value">{user.currency}</span>
+              </div>
+            </div>
+            <div className="profile-detail-item">
+              <Calendar size={18} />
+              <div>
+                <span className="detail-label">{t("memberSince")}</span>
+                <span className="detail-value">{formatDate(user.created_at, language)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Currency Change Card */}
+        <div className="panel">
+          <h3 className="panel__title">
+            <RefreshCw size={20} />
+            {language === "mk" ? "Промени валута" : "Change Currency"}
+          </h3>
+          <p className="panel__subtitle">
+            {language === "mk" 
+              ? "Променете ја валутата и конвертирајте ги сите износи" 
+              : "Change your currency and convert all amounts"}
+          </p>
+
+          {!isChangingCurrency ? (
+            <button
+              className="primary-button"
+              onClick={() => {
+                setSelectedCurrency(user.currency)
+                setIsChangingCurrency(true)
+              }}
+            >
+              {language === "mk" ? "Промени валута" : "Change Currency"}
+            </button>
+          ) : (
+            <div className="currency-form">
+              <div className="currency-select-row">
+                <label>{language === "mk" ? "Нова валута:" : "New currency:"}</label>
+                <select
+                  className="input"
+                  value={selectedCurrency}
+                  onChange={(e) => setSelectedCurrency(e.target.value)}
+                >
+                  {SUPPORTED_CURRENCIES.map((curr) => (
+                    <option key={curr} value={curr}>
+                      {curr}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={convertValues}
+                  onChange={(e) => setConvertValues(e.target.checked)}
+                />
+                {language === "mk" 
+                  ? "Конвертирај ги сите трансакции и буџети" 
+                  : "Convert all transactions and budgets"}
+              </label>
+              <div className="password-form-actions">
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={() => setIsChangingCurrency(false)}
+                >
+                  {t("cancel")}
+                </button>
+                <button
+                  type="button"
+                  className="primary-button"
+                  onClick={handleCurrencyChange}
+                  disabled={currencyLoading}
+                >
+                  {currencyLoading 
+                    ? (language === "mk" ? "Се конвертира…" : "Converting…") 
+                    : t("save")}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Password Change Card */}
+        <div className="panel">
+          <h3 className="panel__title">
+            <Lock size={20} />
+            {t("changePassword")}
+          </h3>
+          <p className="panel__subtitle">
+            {t("updatePasswordDesc")}
+          </p>
+
+          {success && <p className="auth-success">{success}</p>}
+          {error && <p className="auth-error">{error}</p>}
+
+          {!isChangingPassword ? (
+            <button
+              className="primary-button"
+              onClick={() => setIsChangingPassword(true)}
+            >
+              {t("changePassword")}
+            </button>
+          ) : (
+            <form className="password-form" onSubmit={handlePasswordChange}>
+              <input
+                className="input"
+                type="password"
+                placeholder={t("currentPassword")}
+                value={passwordForm.current_password}
+                onChange={(e) =>
+                  setPasswordForm((prev) => ({ ...prev, current_password: e.target.value }))
+                }
+                required
+              />
+              <input
+                className="input"
+                type="password"
+                placeholder={t("newPassword")}
+                value={passwordForm.new_password}
+                onChange={(e) =>
+                  setPasswordForm((prev) => ({ ...prev, new_password: e.target.value }))
+                }
+                required
+              />
+              <input
+                className="input"
+                type="password"
+                placeholder={t("confirmNewPassword")}
+                value={passwordForm.confirm_password}
+                onChange={(e) =>
+                  setPasswordForm((prev) => ({ ...prev, confirm_password: e.target.value }))
+                }
+                required
+              />
+              <div className="password-form-actions">
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={() => {
+                    setIsChangingPassword(false)
+                    setError(null)
+                    setPasswordForm({ current_password: "", new_password: "", confirm_password: "" })
+                  }}
+                >
+                  {t("cancel")}
+                </button>
+                <button className="primary-button" type="submit" disabled={isLoading}>
+                  {isLoading ? t("saving") : t("save")}
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+      </div>
+    </section>
+  )
+}
