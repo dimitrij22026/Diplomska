@@ -82,7 +82,7 @@ A comprehensive personal finance management application that uses AI to provide 
 
    Frontend will be available at `http://localhost:5173`
 
-# 🛠️ Technology Stack
+#  Technology Stack
 
 # Backend
 - **FastAPI**: Modern Python web framework
