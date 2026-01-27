@@ -5,10 +5,10 @@ import type { MonthlyInsight } from "../../api/types"
 import { useAuth } from "../../hooks/useAuth"
 
 export const useMonthlyInsight = () => {
-  const { token } = useAuth()
+  const { token, user } = useAuth()
   return useQuery({
-    queryKey: ["insight", "monthly"],
+    queryKey: ["insight", "monthly", user?.id],
     queryFn: () => apiClient.get<MonthlyInsight>("/transactions/insights/monthly", { token }),
-    enabled: Boolean(token),
+    enabled: Boolean(token && user),
   })
 }

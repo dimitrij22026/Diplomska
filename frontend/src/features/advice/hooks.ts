@@ -5,68 +5,68 @@ import type { AdviceEntry, AdviceRequestPayload, ConversationSummary } from "../
 import { useAuth } from "../../hooks/useAuth"
 
 export const useAdviceHistory = () => {
-  const { token } = useAuth()
+  const { token, user } = useAuth()
   return useQuery({
-    queryKey: ["advice"],
+    queryKey: ["advice", user?.id],
     queryFn: () => apiClient.get<AdviceEntry[]>("/advice", { token }),
-    enabled: Boolean(token),
+    enabled: Boolean(token && user),
   })
 }
 
 export const useConversations = () => {
-  const { token } = useAuth()
+  const { token, user } = useAuth()
   return useQuery({
-    queryKey: ["conversations"],
+    queryKey: ["conversations", user?.id],
     queryFn: () => apiClient.get<ConversationSummary[]>("/advice/conversations", { token }),
-    enabled: Boolean(token),
+    enabled: Boolean(token && user),
   })
 }
 
 export const useConversation = (conversationId: string | null) => {
-  const { token } = useAuth()
+  const { token, user } = useAuth()
   return useQuery({
-    queryKey: ["conversation", conversationId],
+    queryKey: ["conversation", user?.id, conversationId],
     queryFn: () => apiClient.get<AdviceEntry[]>(`/advice/conversations/${conversationId}`, { token }),
-    enabled: Boolean(token) && Boolean(conversationId),
+    enabled: Boolean(token) && Boolean(conversationId) && Boolean(user),
   })
 }
 
 export const useAskAdvice = (onSuccessCallback?: (data: AdviceEntry) => void) => {
-  const { token } = useAuth()
+  const { token, user } = useAuth()
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (payload: AdviceRequestPayload) => apiClient.post<AdviceEntry>("/advice", payload, { token }),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["advice"] })
-      queryClient.invalidateQueries({ queryKey: ["conversations"] })
-      queryClient.invalidateQueries({ queryKey: ["conversation"] })
+      queryClient.invalidateQueries({ queryKey: ["advice", user?.id] })
+      queryClient.invalidateQueries({ queryKey: ["conversations", user?.id] })
+      queryClient.invalidateQueries({ queryKey: ["conversation", user?.id] })
       onSuccessCallback?.(data)
     },
   })
 }
 
 export const useDeleteConversation = () => {
-  const { token } = useAuth()
+  const { token, user } = useAuth()
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (conversationId: string) => apiClient.delete(`/advice/conversations/${conversationId}`, { token }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["advice"] })
-      queryClient.invalidateQueries({ queryKey: ["conversations"] })
-      queryClient.invalidateQueries({ queryKey: ["conversation"] })
+      queryClient.invalidateQueries({ queryKey: ["advice", user?.id] })
+      queryClient.invalidateQueries({ queryKey: ["conversations", user?.id] })
+      queryClient.invalidateQueries({ queryKey: ["conversation", user?.id] })
     },
   })
 }
 
 export const useClearAdviceHistory = () => {
-  const { token } = useAuth()
+  const { token, user } = useAuth()
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: () => apiClient.delete("/advice", { token }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["advice"] })
-      queryClient.invalidateQueries({ queryKey: ["conversations"] })
-      queryClient.invalidateQueries({ queryKey: ["conversation"] })
+      queryClient.invalidateQueries({ queryKey: ["advice", user?.id] })
+      queryClient.invalidateQueries({ queryKey: ["conversations", user?.id] })
+      queryClient.invalidateQueries({ queryKey: ["conversation", user?.id] })
     },
   })
 }
