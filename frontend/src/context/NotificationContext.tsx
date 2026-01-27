@@ -4,8 +4,12 @@ import { useAuth } from "../hooks/useAuth"
 
 const STORAGE_KEY = "finmate-notifications"
 
-function loadNotifications(): Notification[] {
-  const stored = localStorage.getItem(STORAGE_KEY)
+function getStorageKey(userId?: number): string {
+  return userId ? `${STORAGE_KEY}-${userId}` : STORAGE_KEY
+}
+
+function loadNotifications(userId?: number): Notification[] {
+  const stored = localStorage.getItem(getStorageKey(userId))
   if (!stored) return []
 
   try {
@@ -14,7 +18,7 @@ function loadNotifications(): Notification[] {
       createdAt: new Date(n.createdAt),
     }))
   } catch {
-    localStorage.removeItem(STORAGE_KEY)
+    localStorage.removeItem(getStorageKey(userId))
     return []
   }
 }
@@ -22,10 +26,18 @@ function loadNotifications(): Notification[] {
 export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   const initialized = useRef(false)
   const { user } = useAuth()
-  const [hasFiredLoginNotification, setHasFiredLoginNotification] = useState(false)
-  const [hasFiredRegisterNotification, setHasFiredRegisterNotification] = useState(false)
 
-  const [notifications, setNotifications] = useState<Notification[]>(() => loadNotifications())
+  const [notifications, setNotifications] = useState<Notification[]>(() => loadNotifications(user?.id))
+
+  // Clear notifications when user logs out
+  useEffect(() => {
+    if (initialized.current && !user) {
+      setNotifications([])
+    } else if (initialized.current && user) {
+      // Load user-specific notifications when user logs in
+      setNotifications(loadNotifications(user.id))
+    }
+  }, [user])
 
   // Persist notifications to localStorage
   useEffect(() => {
@@ -34,12 +46,13 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
       return
     }
 
+    const storageKey = getStorageKey(user?.id)
     if (notifications.length === 0) {
-      localStorage.removeItem(STORAGE_KEY)
+      localStorage.removeItem(storageKey)
     } else {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(notifications))
+      localStorage.setItem(storageKey, JSON.stringify(notifications))
     }
-  }, [notifications])
+  }, [notifications, user?.id])
 
   const unreadCount = notifications.filter(n => !n.read).length
 
@@ -73,38 +86,44 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
 
   const clearAll = useCallback(() => {
     setNotifications([])
-    localStorage.removeItem(STORAGE_KEY)
-  }, [])
+    localStorage.removeItem(getStorageKey(user?.id))
+  }, [user?.id])
 
-  // Fire welcome/thank-you notifications only once per session
-useEffect(() => {
-  if (user && !hasFiredLoginNotification) {
-    queueMicrotask(() => {
-      addNotification({
-        type: "info",
-        title: "Welcome back",
-        message: `Glad to see you again, ${user.full_name ?? "user"}!`,
-      })
-      setHasFiredLoginNotification(true)
-    })
-  }
-
-  if (user && !hasFiredRegisterNotification) {
-    const createdAt = new Date(user.created_at)
-    const now = new Date()
-    const diffMs = now.getTime() - createdAt.getTime()
-    if (diffMs < 60_000) {
-      queueMicrotask(() => {
-        addNotification({
-          type: "success",
-          title: "Thank you for joining us!",
-          message: `We’re excited to have you on board, ${user.full_name ?? "user"}!`,
+  // Fire welcome/thank-you notifications
+  useEffect(() => {
+    if (user && initialized.current) {
+      // Welcome back notification - fire once per login session
+      const loginKey = `has-fired-login-${user.id}`
+      if (!sessionStorage.getItem(loginKey)) {
+        queueMicrotask(() => {
+          addNotification({
+            type: "info",
+            title: "Welcome back",
+            message: `Glad to see you again, ${user.full_name ?? "user"}!`,
+          })
+          sessionStorage.setItem(loginKey, 'true')
         })
-        setHasFiredRegisterNotification(true)
-      })
+      }
+
+      // Thank you notification - fire only once per user account
+      const registerKey = `has-fired-register-${user.id}`
+      if (!localStorage.getItem(registerKey)) {
+        const createdAt = new Date(user.created_at)
+        const now = new Date()
+        const diffMs = now.getTime() - createdAt.getTime()
+        if (diffMs < 60_000) { // Within 1 minute of account creation
+          queueMicrotask(() => {
+            addNotification({
+              type: "success",
+              title: "Thank you for joining us!",
+              message: `We’re excited to have you on board, ${user.full_name ?? "user"}!`,
+            })
+            localStorage.setItem(registerKey, 'true')
+          })
+        }
+      }
     }
-  }
-}, [user, addNotification, hasFiredLoginNotification, hasFiredRegisterNotification])
+  }, [user, addNotification])
 
   return (
     <NotificationContext.Provider
