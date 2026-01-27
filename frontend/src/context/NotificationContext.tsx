@@ -29,15 +29,18 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
 
   const [notifications, setNotifications] = useState<Notification[]>(() => loadNotifications(user?.id))
 
-  // Clear notifications when user logs out
+  // Clear notifications when user logs out or load user-specific notifications
   useEffect(() => {
-    if (initialized.current && !user) {
+  if (!initialized.current) return
+
+  setTimeout(() => {
+    if (!user) {
       setNotifications([])
-    } else if (initialized.current && user) {
-      // Load user-specific notifications when user logs in
+    } else {
       setNotifications(loadNotifications(user.id))
     }
-  }, [user])
+  }, 0)
+}, [user])
 
   // Persist notifications to localStorage
   useEffect(() => {
@@ -89,20 +92,20 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem(getStorageKey(user?.id))
   }, [user?.id])
 
-  // Fire welcome/thank-you notifications
+  // Fire welcome/thank-you notifications safely
   useEffect(() => {
-    if (user && initialized.current) {
+    if (!user || !initialized.current) return
+
+    const fireNotifications = () => {
       // Welcome back notification - fire once per login session
       const loginKey = `has-fired-login-${user.id}`
       if (!sessionStorage.getItem(loginKey)) {
-        queueMicrotask(() => {
-          addNotification({
-            type: "info",
-            title: "Welcome back",
-            message: `Glad to see you again, ${user.full_name ?? "user"}!`,
-          })
-          sessionStorage.setItem(loginKey, 'true')
+        addNotification({
+          type: "info",
+          title: "Welcome back",
+          message: `Glad to see you again, ${user.full_name ?? "user"}!`,
         })
+        sessionStorage.setItem(loginKey, 'true')
       }
 
       // Thank you notification - fire only once per user account
@@ -110,19 +113,19 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
       if (!localStorage.getItem(registerKey)) {
         const createdAt = new Date(user.created_at)
         const now = new Date()
-        const diffMs = now.getTime() - createdAt.getTime()
-        if (diffMs < 60_000) { // Within 1 minute of account creation
-          queueMicrotask(() => {
-            addNotification({
-              type: "success",
-              title: "Thank you for joining us!",
-              message: `We’re excited to have you on board, ${user.full_name ?? "user"}!`,
-            })
-            localStorage.setItem(registerKey, 'true')
+        if (now.getTime() - createdAt.getTime() < 60_000) {
+          addNotification({
+            type: "success",
+            title: "Thank you for joining us!",
+            message: `We’re excited to have you on board, ${user.full_name ?? "user"}!`,
           })
+          localStorage.setItem(registerKey, 'true')
         }
       }
     }
+
+    const timeoutId = setTimeout(fireNotifications, 0)
+    return () => clearTimeout(timeoutId)
   }, [user, addNotification])
 
   return (
