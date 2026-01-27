@@ -32,3 +32,4 @@ coverage.xml
 
 # Misc
 *.sqlite3
+*.db
