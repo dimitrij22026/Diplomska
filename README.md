@@ -1,11 +1,12 @@
 # App Launch
 
-backend:
+# Backend
 
-cd "c:\Users\dimit\Desktop\Diplomska22026\Diplomska\backend"; $env:PYTHONPATH="c:\Users\dimit\Desktop\Diplomska22026\Diplomska\backend"; & "C:\Users\dimit\AppData\Local\Programs\Python\Python312\python.exe" -m uvicorn app.main:app --host 127.0.0.1 --port 8001
+cd backend; $env:PYTHONPATH="backend"; python -m uvicorn app.main:app --host 127.0.0.1 --port 8001
 
-frontend:
-cd "c:\Users\dimit\Desktop\Diplomska22026\Diplomska\frontend"; npm run dev
+# frontend:
+
+cd frontend; npm run dev
 
 Repo:
 https://github.com/dimitrij22026/Diplomska
@@ -26,42 +27,27 @@ A comprehensive personal finance management application that uses AI to provide 
 # Backend Setup
 
 1. **Navigate to backend directory:**
-   ```bash
    cd backend
-   ```
 
 2. **Create virtual environment:**
-   ```bash
    python -m venv .venv
    # Windows
    .venv\Scripts\activate
    # macOS/Linux
    source .venv/bin/activate
-   ```
 
 3. **Install dependencies:**
-   ```bash
    pip install -r requirements.txt
-   ```
 
 4. **Set up environment variables:**
-   ```bash
    cp .env.example .env
    # Edit .env with your database credentials and OpenAI API key
-   ```
 
-5. **Run database migrations:**
-   ```bash
-   alembic upgrade head
-   ```
-
-6. **Start the development server:**
-   ```bash
+5. **Start the development server:**
    uvicorn app.main:app --reload
-   ```
 
-   API will be available at `http://localhost:8000`
-   Documentation at `http://localhost:8000/docs`
+   # API will be available at http://localhost:8000
+   # Documentation at http://localhost:8000/docs
 
 # Frontend Setup
 
@@ -87,8 +73,8 @@ A comprehensive personal finance management application that uses AI to provide 
 # Backend
 - **FastAPI**: Modern Python web framework
 - **SQLAlchemy**: SQL toolkit and ORM
-- **Alembic**: Database migration tool
-- **PyMySQL**: MySQL database connector
+- **SQLite**: Default database (automatic table creation)
+- **PyMySQL**: Optional MySQL database connector
 - **Pydantic**: Data validation
 - **PassLib**: Password hashing
 - **Python-JOSE**: JWT token handling
@@ -142,5 +128,4 @@ This project was developed as a diploma thesis exploring the intersection of per
 - Advanced analytics and reporting
 - Investment portfolio tracking
 - Mobile application
-- Multi-language support
 - Advanced AI features (predictive analytics, automated savings)
