@@ -72,7 +72,7 @@ def _fallback_response(summary: MonthlyInsight, question: str, user: User) -> st
     )
 
 
-def _build_ai_prompt(summary: MonthlyInsight, question: str, user: User) -> tuple[str, str]:
+def _build_ai_prompt(summary: MonthlyInsight, question: str, user: User, historical_data: dict | None = None) -> tuple[str, str]:
     """Build system and user prompts for AI."""
     summary_text = _summary_text(summary)
     user_name = user.full_name or user.email
@@ -82,20 +82,70 @@ def _build_ai_prompt(summary: MonthlyInsight, question: str, user: User) -> tupl
         "You help users manage their money, budget effectively, and achieve their financial goals. "
         "Always respond in the same language the user asks in (Macedonian or English). "
         "Be concise, practical, and provide actionable advice. "
-        "Use the user's financial data to give personalized recommendations."
+        "Use the user's financial data to give personalized recommendations. "
+        "You have access to both current month data AND historical data from previous months. "
+        "IMPORTANT: When the user asks about all expenses or previous months, analyze ALL the historical data provided below, not just current month. "
+        "The historical data includes all-time totals and monthly breakdowns - use this data to answer questions about past spending."
     )
+
+    # Build historical context
+    historical_context = ""
+    if historical_data:
+        # All-time summary
+        all_time = historical_data.get("all_time", {})
+        if all_time:
+            historical_context += (
+                f"\n\n=== ALL-TIME FINANCIAL SUMMARY ===\n"
+                f"- Total Income (all time): {all_time.get('income', 0):.2f}\n"
+                f"- Total Expenses (all time): {all_time.get('expense', 0):.2f}\n"
+                f"- Net Balance (all time): {all_time.get('balance', 0):.2f}"
+            )
+
+        # All-time categories
+        all_time_categories = historical_data.get("all_time_categories", [])
+        if all_time_categories:
+            cats = ", ".join(f"{cat}: {amt:.2f}" for cat,
+                             amt in all_time_categories[:5])
+            historical_context += f"\n- Top Expense Categories (all time): {cats}"
+        else:
+            historical_context += f"\n- Top Expense Categories (all time): No expenses recorded"
+
+        # Monthly breakdown
+        monthly = historical_data.get("monthly_breakdown", [])
+        if monthly:
+            historical_context += "\n\n=== MONTHLY HISTORY (last 6 months) ==="
+            has_any_data = False
+            for m in monthly:
+                income = m['income']
+                expense = m['expense']
+                balance = income - expense
+                if income > 0 or expense > 0:
+                    has_any_data = True
+                historical_context += f"\n- {m['month']}: Income {income:.2f}, Expenses {expense:.2f}, Balance {balance:.2f}"
+            if not has_any_data:
+                historical_context += "\n(No transactions recorded in these months)"
+
+        # Recent transactions list
+        recent_transactions = historical_data.get("recent_transactions", [])
+        if recent_transactions:
+            historical_context += "\n\n=== RECENT TRANSACTIONS (last 20) ==="
+            for tx in recent_transactions:
+                tx_type = "Income" if tx['type'] == 'INCOME' else "Expense"
+                historical_context += f"\n- {tx['date']}: {tx_type} - {tx['category']}: {tx['amount']:.2f} {tx.get('note', '')}"
 
     user_prompt = (
         f"User: {user_name}\n"
-        f"Monthly Summary: {summary_text}\n"
+        f"Current Month Summary: {summary_text}"
+        f"{historical_context}\n\n"
         f"Question: {question}\n\n"
-        "Please provide helpful, specific financial advice based on this context."
+        "Please provide helpful, specific financial advice based on this context. "
+        "If the user asks about previous months or historical data, use the monthly history provided."
     )
 
     return system_prompt, user_prompt
 
 
-def _gemini_response(summary: MonthlyInsight, question: str, user: User) -> str | None:
+def _gemini_response(summary: MonthlyInsight, question: str, user: User, historical_data: dict | None = None) -> str | None:
     """Get response from Google Gemini API (FREE)."""
     print(
         f"DEBUG: Checking Gemini API key: {'SET' if settings.GOOGLE_GEMINI_API_KEY else 'NOT SET'}")
@@ -104,7 +154,8 @@ def _gemini_response(summary: MonthlyInsight, question: str, user: User) -> str 
         return None
 
     print(f"DEBUG: Calling Gemini API...")
-    system_prompt, user_prompt = _build_ai_prompt(summary, question, user)
+    system_prompt, user_prompt = _build_ai_prompt(
+        summary, question, user, historical_data)
 
     # Gemini uses a combined prompt format
     full_prompt = f"{system_prompt}\n\n{user_prompt}"
@@ -149,7 +200,7 @@ def _gemini_response(summary: MonthlyInsight, question: str, user: User) -> str 
     return None
 
 
-def _groq_response(summary: MonthlyInsight, question: str, user: User) -> str | None:
+def _groq_response(summary: MonthlyInsight, question: str, user: User, historical_data: dict | None = None) -> str | None:
     """Get response from Groq API (FREE - 30 req/min)."""
     print(
         f"DEBUG: Checking Groq API key: {'SET' if settings.GROQ_API_KEY else 'NOT SET'}")
@@ -158,7 +209,8 @@ def _groq_response(summary: MonthlyInsight, question: str, user: User) -> str | 
         return None
 
     print("DEBUG: Calling Groq API...")
-    system_prompt, user_prompt = _build_ai_prompt(summary, question, user)
+    system_prompt, user_prompt = _build_ai_prompt(
+        summary, question, user, historical_data)
 
     payload = {
         "model": "llama-3.3-70b-versatile",
@@ -190,12 +242,13 @@ def _groq_response(summary: MonthlyInsight, question: str, user: User) -> str | 
     return None
 
 
-def _openai_response(summary: MonthlyInsight, question: str, user: User) -> str | None:
+def _openai_response(summary: MonthlyInsight, question: str, user: User, historical_data: dict | None = None) -> str | None:
     """Get response from OpenAI API (paid)."""
     if not settings.OPENAI_API_KEY:
         return None
 
-    system_prompt, user_prompt = _build_ai_prompt(summary, question, user)
+    system_prompt, user_prompt = _build_ai_prompt(
+        summary, question, user, historical_data)
 
     payload: dict[str, Any] = {
         "model": "gpt-4o-mini",
@@ -243,12 +296,53 @@ def generate_advice(db: Session, user: User, request: AdviceRequest) -> AdviceEn
         month_label=reference.strftime("%Y-%m"),
     )
 
+    # Gather historical data for AI context
+    all_time_income, all_time_expense = transaction_service.all_time_summary(
+        db, user.id)
+    all_time_categories = transaction_service.all_time_expense_categories(
+        db, user.id)
+    monthly_breakdown = transaction_service.monthly_breakdown(
+        db, user.id, months=6)
+
+    # Get recent transactions for more context
+    recent_txs = transaction_service.list_transactions(db, user.id, limit=20)
+    recent_transactions = [
+        {
+            "date": tx.occurred_at.strftime("%Y-%m-%d"),
+            "type": tx.transaction_type.value,
+            "category": tx.category,
+            "amount": tx.amount,
+            "note": tx.note or "",
+        }
+        for tx in recent_txs
+    ]
+
+    historical_data = {
+        "all_time": {
+            "income": all_time_income,
+            "expense": all_time_expense,
+            "balance": all_time_income - all_time_expense,
+        },
+        "all_time_categories": all_time_categories,
+        "monthly_breakdown": monthly_breakdown,
+        "recent_transactions": recent_transactions,
+    }
+
+    # Debug logging
+    print(f"DEBUG: Historical data for user {user.id}:")
+    print(f"  All-time income: {all_time_income}, expense: {all_time_expense}")
+    print(f"  All-time categories: {all_time_categories}")
+    print(f"  Monthly breakdown: {monthly_breakdown}")
+    print(f"  Recent transactions count: {len(recent_transactions)}")
+
     # Try Groq first (free, fast), then Gemini, then OpenAI, then fallback
-    response = _groq_response(summary, request.question, user)
+    response = _groq_response(summary, request.question, user, historical_data)
     if not response:
-        response = _gemini_response(summary, request.question, user)
+        response = _gemini_response(
+            summary, request.question, user, historical_data)
     if not response:
-        response = _openai_response(summary, request.question, user)
+        response = _openai_response(
+            summary, request.question, user, historical_data)
     if not response:
         response = _fallback_response(summary, request.question, user)
 

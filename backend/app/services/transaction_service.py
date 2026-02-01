@@ -154,3 +154,79 @@ def top_expense_categories(
         .limit(limit)
     )
     return [(row[0], Decimal(row[1])) for row in db.execute(statement).all()]
+
+
+def all_time_summary(db: Session, user_id: int) -> tuple[Decimal, Decimal]:
+    """Get total income and expenses for all time."""
+    statement = (
+        select(Transaction.transaction_type, func.coalesce(
+            func.sum(Transaction.amount), 0))
+        .where(Transaction.user_id == user_id)
+        .group_by(Transaction.transaction_type)
+    )
+    totals = {row[0]: Decimal(row[1]) for row in db.execute(statement)}
+    total_income = totals.get(TransactionType.INCOME, Decimal("0"))
+    total_expense = totals.get(TransactionType.EXPENSE, Decimal("0"))
+    return total_income, total_expense
+
+
+def all_time_expense_categories(
+    db: Session, user_id: int, limit: int = 10
+) -> list[tuple[str, Decimal]]:
+    """Get top expense categories for all time."""
+    statement = (
+        select(Transaction.category, func.coalesce(
+            func.sum(Transaction.amount), 0))
+        .where(
+            and_(
+                Transaction.user_id == user_id,
+                Transaction.transaction_type == TransactionType.EXPENSE,
+            )
+        )
+        .group_by(Transaction.category)
+        .order_by(func.sum(Transaction.amount).desc())
+        .limit(limit)
+    )
+    return [(row[0], Decimal(row[1])) for row in db.execute(statement).all()]
+
+
+def monthly_breakdown(db: Session, user_id: int, months: int = 6) -> list[dict]:
+    """Get income/expense summary for the last N months."""
+    from datetime import timedelta
+    from calendar import monthrange
+
+    results = []
+    now = datetime.now(timezone.utc)
+
+    for i in range(months):
+        # Calculate month offset
+        year = now.year
+        month = now.month - i
+        while month <= 0:
+            month += 12
+            year -= 1
+
+        ref_date = now.replace(year=year, month=month, day=1)
+        start, end = month_bounds(ref_date)
+
+        statement = (
+            select(Transaction.transaction_type, func.coalesce(
+                func.sum(Transaction.amount), 0))
+            .where(
+                and_(
+                    Transaction.user_id == user_id,
+                    Transaction.occurred_at >= start,
+                    Transaction.occurred_at < end,
+                )
+            )
+            .group_by(Transaction.transaction_type)
+        )
+        totals = {row[0]: Decimal(row[1]) for row in db.execute(statement)}
+
+        results.append({
+            "month": ref_date.strftime("%Y-%m"),
+            "income": totals.get(TransactionType.INCOME, Decimal("0")),
+            "expense": totals.get(TransactionType.EXPENSE, Decimal("0")),
+        })
+
+    return results
