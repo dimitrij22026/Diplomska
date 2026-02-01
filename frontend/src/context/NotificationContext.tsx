@@ -25,22 +25,36 @@ function loadNotifications(userId?: number): Notification[] {
 
 export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   const initialized = useRef(false)
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
+  const prevUserIdRef = useRef<number | null | undefined>(undefined)
 
   const [notifications, setNotifications] = useState<Notification[]>(() => loadNotifications(user?.id))
 
   // Clear notifications when user logs out or load user-specific notifications
   useEffect(() => {
-  if (!initialized.current) return
+    if (!initialized.current) return
+    if (loading) return // Don't act while auth is loading
 
-  setTimeout(() => {
-    if (!user) {
-      setNotifications([])
-    } else {
-      setNotifications(loadNotifications(user.id))
-    }
-  }, 0)
-}, [user])
+    setTimeout(() => {
+      const prevUserId = prevUserIdRef.current
+      
+      if (!user) {
+        setNotifications([])
+        // Only clear login flags on actual logout (when there was a previous user)
+        if (prevUserId !== undefined && prevUserId !== null) {
+          Object.keys(sessionStorage).forEach(key => {
+            if (key.startsWith('has-fired-login-')) {
+              sessionStorage.removeItem(key)
+            }
+          })
+        }
+      } else {
+        setNotifications(loadNotifications(user.id))
+      }
+      
+      prevUserIdRef.current = user?.id ?? null
+    }, 0)
+  }, [user, loading])
 
   // Persist notifications to localStorage
   useEffect(() => {
@@ -97,30 +111,32 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
     if (!user || !initialized.current) return
 
     const fireNotifications = () => {
-      // Welcome back notification - fire once per login session
+      const registerKey = `has-fired-register-${user.id}`
       const loginKey = `has-fired-login-${user.id}`
-      if (!sessionStorage.getItem(loginKey)) {
+      
+      // Check if this is a new user (created within the last 60 seconds)
+      const createdAt = new Date(user.created_at)
+      const now = new Date()
+      const isNewUser = now.getTime() - createdAt.getTime() < 60_000
+
+      // Thank you notification - fire only once per user account (for new registrations)
+      if (isNewUser && !localStorage.getItem(registerKey)) {
+        addNotification({
+          type: "success",
+          title: "Thank you for joining us!",
+          message: `We're excited to have you on board, ${user.full_name ?? "user"}!`,
+        })
+        localStorage.setItem(registerKey, 'true')
+        sessionStorage.setItem(loginKey, 'true') // Also mark login as fired to prevent duplicate
+      } 
+      // Welcome back notification - fire once per login session (only for existing users)
+      else if (!sessionStorage.getItem(loginKey)) {
         addNotification({
           type: "info",
           title: "Welcome back",
           message: `Glad to see you again, ${user.full_name ?? "user"}!`,
         })
         sessionStorage.setItem(loginKey, 'true')
-      }
-
-      // Thank you notification - fire only once per user account
-      const registerKey = `has-fired-register-${user.id}`
-      if (!localStorage.getItem(registerKey)) {
-        const createdAt = new Date(user.created_at)
-        const now = new Date()
-        if (now.getTime() - createdAt.getTime() < 60_000) {
-          addNotification({
-            type: "success",
-            title: "Thank you for joining us!",
-            message: `We’re excited to have you on board, ${user.full_name ?? "user"}!`,
-          })
-          localStorage.setItem(registerKey, 'true')
-        }
       }
     }
 
