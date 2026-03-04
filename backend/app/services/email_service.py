@@ -37,12 +37,12 @@ def send_verification_email(to_email: str, token: str) -> bool:
     verification_url = f"{settings.FRONTEND_URL}/auth/verify?token={token}"
 
     msg = MIMEMultipart("alternative")
-    msg["Subject"] = "Потврдете ја вашата FinMate сметка"
+    msg["Subject"] = "Потврдете ја вашата Finson сметка"
     msg["From"] = f"{settings.SMTP_FROM_NAME} <{settings.SMTP_FROM_EMAIL}>"
     msg["To"] = to_email
 
     text_content = f"""
-Добредојдовте во FinMate!
+Добредојдовте во Finson!
 
 Ве молиме потврдете ја вашата email адреса со кликнување на следниот линк:
 {verification_url}
@@ -52,7 +52,7 @@ def send_verification_email(to_email: str, token: str) -> bool:
 Ако не сте ја креирале оваа сметка, можете да ја игнорирате оваа порака.
 
 Со почит,
-Тимот на FinMate
+Тимот на Finson
 """
 
     html_content = f"""
@@ -69,7 +69,7 @@ def send_verification_email(to_email: str, token: str) -> bool:
 </head>
 <body>
     <div class="container">
-        <h1>Добредојдовте во FinMate!</h1>
+        <h1>Добредојдовте во Finson!</h1>
         <p>Ви благодариме што се регистриравте. Ве молиме потврдете ја вашата email адреса за да започнете со користење на апликацијата.</p>
         <a href="{verification_url}" class="button">Потврди Email</a>
         <p class="footer">

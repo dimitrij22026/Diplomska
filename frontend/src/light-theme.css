@@ -1,0 +1,354 @@
+/* LIGHT THEME GLOBALS & OVERRIDES */
+
+/* Layout & Sidebar */
+:root[data-theme="light"] .nav-link:hover:not(.nav-link--active) {
+  background: rgba(15, 23, 42, 0.05);
+}
+
+/* Modals */
+:root[data-theme="light"] .modal {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="light"] .modal__close:hover {
+  background: rgba(15, 23, 42, 0.05);
+}
+
+/* Buttons */
+:root[data-theme="light"] .btn-primary,
+:root[data-theme="light"] .primary-button {
+  color: #ffffff;
+}
+
+:root[data-theme="light"] .btn-secondary {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.2);
+  color: var(--text);
+}
+
+:root[data-theme="light"] .btn-secondary:hover {
+  background: rgba(15, 23, 42, 0.05);
+  border-color: rgba(15, 23, 42, 0.3);
+}
+
+:root[data-theme="light"] .btn-danger {
+  color: #ffffff;
+}
+
+/* Inputs */
+:root[data-theme="light"] .input {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.2);
+}
+
+:root[data-theme="light"] .input:focus {
+  background: #ffffff;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.1);
+}
+
+/* Auth Page */
+:root[data-theme="light"] .auth-page {
+  background: radial-gradient(circle at 10% 20%, rgba(234, 88, 12, 0.08), transparent 45%),
+    radial-gradient(circle at 80% 0%, rgba(37, 99, 235, 0.06), transparent 45%),
+    #ffffff;
+}
+
+:root[data-theme="light"] .auth-card {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+}
+
+/* AI Advisor Page */
+:root[data-theme="light"] .advice-sidebar {
+  background: #ffffff;
+}
+
+:root[data-theme="light"] .advice-new-chat-btn {
+  color: #ffffff;
+}
+
+:root[data-theme="light"] .advice-sidebar__toggle:hover {
+  background: rgba(15, 23, 42, 0.05);
+}
+
+:root[data-theme="light"] .advice-sidebar__item:hover {
+  background: rgba(15, 23, 42, 0.05);
+}
+
+:root[data-theme="light"] .advice-sidebar__item--active {
+  background: rgba(234, 88, 12, 0.08);
+}
+
+:root[data-theme="light"] .advice-chat-container {
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+}
+
+:root[data-theme="light"] .advice-empty__icon {
+  background: rgba(234, 88, 12, 0.1);
+}
+
+:root[data-theme="light"] .advice-suggestions button {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.15);
+}
+
+:root[data-theme="light"] .advice-suggestions button:hover {
+  background: rgba(234, 88, 12, 0.05);
+  border-color: var(--accent);
+}
+
+:root[data-theme="light"] .advice-message__avatar--user {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+}
+
+:root[data-theme="light"] .advice-message__avatar--ai {
+  color: #ffffff;
+}
+
+:root[data-theme="light"] .advice-message__content {
+  background: rgba(37, 99, 235, 0.08);
+  border-color: rgba(37, 99, 235, 0.15);
+}
+
+:root[data-theme="light"] .advice-message__content--ai {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+:root[data-theme="light"] .advice-input-form {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+:root[data-theme="light"] .advice-input-wrapper {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.15);
+}
+
+:root[data-theme="light"] .advice-send-button {
+  color: #ffffff;
+}
+
+:root[data-theme="light"] .advice-sidebar__open-btn {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.15);
+}
+
+:root[data-theme="light"] .advice-sidebar__open-btn:hover {
+  background: rgba(15, 23, 42, 0.05);
+}
+
+/* Dashboard Elements */
+:root[data-theme="light"] .insight-list__item {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+:root[data-theme="light"] .progress {
+  background: rgba(15, 23, 42, 0.05);
+}
+
+:root[data-theme="light"] .period-selector {
+  background: rgba(15, 23, 42, 0.05);
+}
+
+:root[data-theme="light"] .period-btn:hover:not(.period-btn--active) {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+/* Tables */
+:root[data-theme="light"] .table th,
+:root[data-theme="light"] .table td {
+  border-bottom-color: rgba(15, 23, 42, 0.05);
+}
+
+:root[data-theme="light"] .table tbody tr:hover {
+  background: rgba(15, 23, 42, 0.02);
+}
+
+/* Transaction Page */
+:root[data-theme="light"] .transaction-item {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+:root[data-theme="light"] .transaction-item:hover {
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+:root[data-theme="light"] .transaction-form {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.1);
+}
+
+:root[data-theme="light"] .filter-bar {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.1);
+}
+
+/* Badges */
+:root[data-theme="light"] .badge--success {
+  background: rgba(22, 163, 74, 0.15);
+  color: #16a34a;
+}
+
+:root[data-theme="light"] .badge--danger {
+  background: rgba(220, 38, 38, 0.15);
+  color: #dc2626;
+}
+
+:root[data-theme="light"] .badge--warning {
+  background: rgba(234, 179, 8, 0.15);
+  color: #ca8a04;
+}
+
+/* Stat Cards */
+:root[data-theme="light"] .stat-card__icon {
+  color: #ffffff;
+}
+
+/* User Settings / Profile */
+:root[data-theme="light"] .settings-card {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.1);
+}
+
+:root[data-theme="light"] .setting-item {
+  border-bottom-color: rgba(15, 23, 42, 0.05);
+}
+
+/* Topbar */
+:root[data-theme="light"] .topbar {
+  border-bottom-color: rgba(15, 23, 42, 0.1);
+}
+
+/* Portfolio & Charts */
+:root[data-theme="light"] .portfolio-card {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+}
+
+:root[data-theme="light"] .recharts-tooltip-wrapper .recharts-default-tooltip {
+  background-color: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.1) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+:root[data-theme="light"] .recharts-tooltip-item {
+  color: var(--text) !important;
+}
+
+/* Notifications */
+:root[data-theme="light"] .notification-panel {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.1);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="light"] .notification-header {
+  border-bottom-color: rgba(15, 23, 42, 0.05);
+}
+
+:root[data-theme="light"] .notification-item {
+  border-bottom-color: rgba(15, 23, 42, 0.05);
+}
+
+:root[data-theme="light"] .notification-item:hover {
+  background: rgba(15, 23, 42, 0.02);
+}
+
+:root[data-theme="light"] .notification-item--unread {
+  background: rgba(234, 88, 12, 0.03);
+}
+
+:root[data-theme="light"] .notification-item--unread:hover {
+  background: rgba(234, 88, 12, 0.06);
+}
+
+:root[data-theme="light"] .notification-action-btn:hover {
+  background: rgba(15, 23, 42, 0.05);
+}
+
+
+:root[data-theme="light"] .advice-header__icon {
+  color: #ffffff;
+}
+
+
+/* Market Pages */
+:root[data-theme="light"] .market-controls {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+:root[data-theme="light"] .market-sort-btn {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.2);
+}
+
+:root[data-theme="light"] .market-sort-dropdown,
+:root[data-theme="light"] .market-search-dropdown {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.1);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="light"] .market-sort-option {
+  border-bottom-color: rgba(15, 23, 42, 0.05);
+}
+
+:root[data-theme="light"] .market-sort-option:hover {
+  background: rgba(15, 23, 42, 0.05);
+}
+
+:root[data-theme="light"] .market-search-result {
+  border-bottom-color: rgba(15, 23, 42, 0.05);
+}
+
+:root[data-theme="light"] .market-search-result:hover {
+  background: rgba(15, 23, 42, 0.05);
+}
+
+:root[data-theme="light"] .market-chip {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.15);
+}
+
+:root[data-theme="light"] .market-chip:hover:not(.market-chip--active) {
+  background: rgba(15, 23, 42, 0.05);
+  color: var(--text);
+}
+
+:root[data-theme="light"] .market-chip--active,
+:root[data-theme="light"] .market-chip--active:hover {
+  background: var(--accent) !important;
+  color: #ffffff !important;
+  border-color: var(--accent) !important;
+}
+
+:root[data-theme="light"] .market-table th,
+:root[data-theme="light"] .market-table td {
+  border-bottom-color: rgba(15, 23, 42, 0.05);
+}
+
+:root[data-theme="light"] .market-table tr:hover {
+  background: rgba(15, 23, 42, 0.02);
+}
+:root[data-theme="light"] .coin-chart-modal {
+  background: #ffffff;
+}
+
+:root[data-theme="light"] .coin-chart-modal__stats {
+  border-top-color: rgba(15, 23, 42, 0.05);
+}

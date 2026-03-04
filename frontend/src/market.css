@@ -1,0 +1,356 @@
+.market-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.market-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--card);
+  padding: 1rem;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+}
+
+.market-search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 250px;
+  max-width: 400px;
+}
+
+.market-search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+}
+
+input.market-search {
+  width: 100%;
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+}
+
+.market-clear-btn {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.market-clear-btn:hover {
+  color: var(--text);
+}
+
+.market-sort-wrap {
+  position: relative;
+  min-width: 180px;
+}
+
+.market-sort-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.market-sort-dropdown, .market-search-dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  width: 100%;
+  background: var(--card-strong);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  overflow: hidden;
+}
+
+.market-search-dropdown {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+:root[data-theme="light"] .market-sort-dropdown,
+:root[data-theme="light"] .market-search-dropdown {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.market-sort-option {
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+}
+
+.market-sort-option:last-child {
+  border-bottom: none;
+}
+
+.market-sort-option:hover {
+  color: var(--text);
+  background: var(--surface);
+}
+
+.market-sort-option--active {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.market-search-result {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s;
+}
+
+.market-search-result:last-child {
+  border-bottom: none;
+}
+
+.market-search-result:hover {
+  background: var(--surface);
+}
+
+.market-search-result strong {
+  font-weight: 600;
+  min-width: 60px;
+}
+
+.market-search-result span {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.market-search-result .eyebrow {
+  flex: 0 0 auto;
+}
+
+.market-row-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.market-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.market-chip {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.market-chip:hover {
+  color: var(--text);
+  border-color: var(--muted);
+}
+
+.market-chip--active {
+  background: var(--accent);
+  color: #fff !important;
+  border-color: var(--accent);
+}
+
+.market-table-wrap {
+  overflow-x: auto;
+}
+
+.market-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.market-table th {
+  text-align: left;
+  padding: 1rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.market-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.market-table tr:hover {
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.market-table tr:last-child td {
+  border-bottom: none;
+}
+
+.market-coin-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.market-coin-cell img {
+  border-radius: 50%;
+}
+
+.market-coin-name {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.market-coin-symbol {
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+
+.market-price {
+  font-weight: 600;
+}
+
+.market-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.market-badge--up {
+  color: var(--positive);
+}
+
+.market-badge--down {
+  color: var(--negative);
+}
+
+.market-load-more {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem 0;
+}
+
+.market-count {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.coin-chart-modal {
+  max-width: 600px;
+  width: 95%;
+  background: var(--card-strong);
+  padding: 24px; /* Added padding to fix content touching edges */
+}
+
+.coin-chart-modal__title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.coin-chart-modal__title h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.coin-chart-modal__meta {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.coin-chart-modal__price {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.coin-chart-modal__chart {
+  margin-bottom: 1.5rem;
+}
+
+.coin-chart-modal__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1.5rem;
+}
+
+.coin-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.coin-stat span {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.coin-stat strong {
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.market-rank {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.market-count {
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: center;
+  display: block;
+}

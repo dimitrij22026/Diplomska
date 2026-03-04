@@ -78,7 +78,7 @@ def _build_ai_prompt(summary: MonthlyInsight, question: str, user: User, histori
     user_name = user.full_name or user.email
 
     system_prompt = (
-        "You are FinMate, a friendly and knowledgeable personal finance assistant. "
+        "You are Finson, a friendly and knowledgeable personal finance assistant. "
         "You help users manage their money, budget effectively, and achieve their financial goals. "
         "Always respond in the same language the user asks in (Macedonian or English). "
         "Be concise, practical, and provide actionable advice. "

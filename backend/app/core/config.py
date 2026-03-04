@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str | None = None
     GOOGLE_GEMINI_API_KEY: str | None = None
     GROQ_API_KEY: str | None = None
-    AI_ASSISTANT_NAME: str = "FinMate"
+    AI_ASSISTANT_NAME: str = "Finson"
 
     # Email settings
     SMTP_HOST: str = ""
@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     SMTP_USER: str = ""
     SMTP_PASSWORD: str = ""
     SMTP_FROM_EMAIL: str = ""
-    SMTP_FROM_NAME: str = "FinMate"
+    SMTP_FROM_NAME: str = "Finson"
     EMAIL_VERIFICATION_EXPIRE_HOURS: int = 24
     FRONTEND_URL: str = "http://localhost:5173"
 

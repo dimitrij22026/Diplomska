@@ -1,21 +1,27 @@
-import { BarChart3, Bot, CreditCard, Globe, LogOut, PiggyBank, TrendingUp, User } from "lucide-react"
+import { BarChart3, Bot, CreditCard, Globe, LogOut, Moon, PiggyBank, Sun, TrendingUp, User, Monitor, Info } from "lucide-react"
 import { NavLink, useNavigate } from "react-router-dom"
 
 import { useAuth } from "../../hooks/useAuth"
+import { useTheme } from "../../hooks/useTheme"
 import { useLanguage } from "../../i18n"
 
 export const Sidebar = () => {
   const { logout } = useAuth()
   const navigate = useNavigate()
   const { language, setLanguage, t } = useLanguage()
+  const { mode, setMode } = useTheme()
 
   const navItems = [
     { to: "/", label: t("overview"), icon: <BarChart3 size={18} /> },
     { to: "/transactions", label: t("transactions"), icon: <CreditCard size={18} /> },
     { to: "/budgets", label: t("budgets"), icon: <PiggyBank size={18} /> },
     { to: "/analytics", label: language === "mk" ? "Аналитика" : "Analytics", icon: <TrendingUp size={18} /> },
+    { to: "/portfolio", label: t("portfolio"), icon: <TrendingUp size={18} /> },
+    { to: "/crypto", label: t("crypto"), icon: <Moon size={18} /> },
+    { to: "/stocks", label: t("stocks"), icon: <Sun size={18} /> },
     { to: "/assistant", label: t("aiAdvisor"), icon: <Bot size={18} /> },
     { to: "/profile", label: t("profile"), icon: <User size={18} /> },
+    { to: "/about", label: language === "mk" ? "За нас" : "About Us", icon: <Info size={18} /> },
   ]
 
   return (
@@ -23,7 +29,7 @@ export const Sidebar = () => {
       <div className="sidebar__brand">
         <div className="sidebar__logo">ƒ</div>
         <div>
-          <p className="sidebar__title">FinMate</p>
+          <p className="sidebar__title">Finson</p>
           <p className="sidebar__subtitle">
             {language === "mk" ? "AI финансиски советник" : "AI financial advisor"}
           </p>
@@ -55,6 +61,36 @@ export const Sidebar = () => {
           onClick={() => setLanguage("en")}
         >
           EN
+        </button>
+      </div>
+
+      <div className="sidebar__theme" role="group" aria-label={language === "mk" ? "Тема" : "Theme"}>
+        <button
+          type="button"
+          className={mode === "light" ? "theme-btn theme-btn--active" : "theme-btn"}
+          onClick={() => setMode("light")}
+          title={language === "mk" ? "Светла" : "Light"}
+        >
+          <Sun size={16} />
+          <span>{language === "mk" ? "Светла" : "Light"}</span>
+        </button>
+        <button
+          type="button"
+          className={mode === "dark" ? "theme-btn theme-btn--active" : "theme-btn"}
+          onClick={() => setMode("dark")}
+          title={language === "mk" ? "Темна" : "Dark"}
+        >
+          <Moon size={16} />
+          <span>{language === "mk" ? "Темна" : "Dark"}</span>
+        </button>
+        <button
+          type="button"
+          className={mode === "system" ? "theme-btn theme-btn--active" : "theme-btn"}
+          onClick={() => setMode("system")}
+          title={language === "mk" ? "Систем" : "System"}
+        >
+          <Monitor size={16} />
+          <span>{language === "mk" ? "Систем" : "System"}</span>
         </button>
       </div>
       

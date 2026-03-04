@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useRef, type ReactNode } from "react"
 import { NotificationContext, type Notification } from "./notification-context"
 import { useAuth } from "../hooks/useAuth"
 
-const STORAGE_KEY = "finmate-notifications"
+const STORAGE_KEY = "finson-notifications"
 
 function getStorageKey(userId?: number): string {
   return userId ? `${STORAGE_KEY}-${userId}` : STORAGE_KEY

@@ -383,7 +383,16 @@ export const TransactionsPage = () => {
 </li>
             <li className="insight-list__item">
               <span>{t("lastTransaction")}</span>
-              <strong>{filteredData?.[0] ? formatDate(filteredData[0].occurred_at, language) : "—"}</strong>
+              <strong>
+                {(() => {
+                  if (!filteredData || filteredData.length === 0) return "—"
+                  // Find the most recent transaction by date
+                  const mostRecent = filteredData.reduce((latest, tx) => {
+                    return new Date(tx.occurred_at) > new Date(latest.occurred_at) ? tx : latest
+                  })
+                  return formatDate(mostRecent.occurred_at, language)
+                })()}
+              </strong>
             </li>
           </ul>
         </div>

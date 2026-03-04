@@ -6,7 +6,7 @@ import {
 import { translations, type Language } from "./translations"
 import { LanguageContext } from "./language-context"
 
-const STORAGE_KEY = "finmate.language"
+const STORAGE_KEY = "finson.language"
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>(() => {

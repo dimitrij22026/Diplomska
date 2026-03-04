@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from .endpoints import advice, auth, budgets, health, transactions, users
+from .endpoints import advice, auth, budgets, health, transactions, users, market
 
 api_router = APIRouter()
 api_router.include_router(health.router, prefix="/health", tags=["health"])
@@ -9,3 +9,4 @@ api_router.include_router(users.router)
 api_router.include_router(transactions.router)
 api_router.include_router(budgets.router)
 api_router.include_router(advice.router)
+api_router.include_router(market.router)

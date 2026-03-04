@@ -3,6 +3,7 @@ export const translations = {
     // Common
     save: "Зачувај",
     cancel: "Откажи",
+    edit: "Измени",
     loading: "Се вчитува…",
     search: "Барај",
     
@@ -23,6 +24,9 @@ export const translations = {
     overview: "Преглед",
     transactions: "Трансакции",
     budgets: "Буџети",
+    portfolio: "Портфолио",
+    crypto: "Крипто",
+    stocks: "Акции",
     aiAdvisor: "AI Советник",
     profile: "Профил",
     logout: "Одјава",
@@ -175,7 +179,6 @@ export const translations = {
     totalWithCarryover: "Вкупно со пренесено",
     
     // Edit actions
-    edit: "Измени",
     editTransaction: "Измени трансакција",
     editBudget: "Измени буџет",
   },
@@ -183,6 +186,7 @@ export const translations = {
     // Common
     save: "Save",
     cancel: "Cancel",
+    edit: "Edit",
     loading: "Loading…",
     search: "Search",
     
@@ -203,6 +207,9 @@ export const translations = {
     overview: "Overview",
     transactions: "Transactions",
     budgets: "Budgets",
+    portfolio: "Portfolio",
+    crypto: "Crypto",
+    stocks: "Stocks",
     aiAdvisor: "AI Advisor",
     profile: "Profile",
     logout: "Logout",
@@ -353,6 +360,10 @@ export const translations = {
     carryover: "Carryover",
     fromLastMonth: "from last month",
     totalWithCarryover: "Total with carryover",
+    
+    // Edit actions
+    editTransaction: "Edit transaction",
+    editBudget: "Edit budget",
   },
 } as const
 

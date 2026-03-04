@@ -84,8 +84,8 @@ export const DashboardPage = () => {
   // Dynamic status messages
   const statusMessages: Record<"excellent" | "good" | "fair" | "critical", Record<"mk" | "en", string>> = {
     excellent: {
-      mk: `Одличен финансиски месец, ${topCategory}`,
-      en: `Excellent financial month, ${topCategory}`
+      mk: `Одличен финансиски месец - Трошок на месецот ${topCategory}`,
+      en: `Excellent financial month - Expense of the month ${topCategory}`
     },
     good: {
       mk: `Добар финансиски месец, ${topCategory}`,

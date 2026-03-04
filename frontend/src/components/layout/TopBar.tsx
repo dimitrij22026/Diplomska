@@ -1,4 +1,5 @@
 import { Search } from "lucide-react"
+import { useLocation } from "react-router-dom"
 import { format } from "date-fns"
 import { mk, enUS } from "date-fns/locale"
 
@@ -11,6 +12,9 @@ export const TopBar = () => {
   const { user } = useAuth()
   const { searchTerm, handleSearch } = useSearch()
   const { language, t } = useLanguage()
+  const location = useLocation()
+
+  const showSearch = location.pathname.startsWith("/transactions")
 
   const dateLocale = language === "mk" ? mk : enUS
   const dateFormat = language === "mk" ? "dd.MM.yyyy" : "MM/dd/yyyy"
@@ -23,15 +27,17 @@ export const TopBar = () => {
         <p className="topbar__date">{format(new Date(), dateFormat, { locale: dateLocale })}</p>
       </div>
       <div className="topbar__actions">
-        <div className="topbar__search">
-          <Search size={18} />
-          <input
-            placeholder={t("searchTransactions")}
-            aria-label="Search"
-            value={searchTerm}
-            onChange={(e) => handleSearch(e.target.value)}
-          />
-        </div>
+        {showSearch && (
+          <div className="topbar__search">
+            <Search size={18} />
+            <input
+              placeholder={t("searchTransactions")}
+              aria-label="Search"
+              value={searchTerm}
+              onChange={(e) => handleSearch(e.target.value)}
+            />
+          </div>
+        )}
         <NotificationDropdown />
         <div className="topbar__badge">{user?.currency ?? "EUR"}</div>
       </div>
