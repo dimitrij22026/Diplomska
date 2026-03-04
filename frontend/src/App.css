@@ -390,14 +390,16 @@
   margin-top: 1rem;
 }
 
-/* Prevent outer scroll when advice page is shown */
-.app-content:has(.advice-page) {
+/* Prevent outer scroll when advice page or dashboard page is shown */
+.app-content:has(.advice-page),
+.app-content:has(.dashboard-page) {
   padding: 1rem 3rem 0;
   overflow: hidden;
   height: calc(100vh - 80px);
 }
 
-.app-main:has(.advice-page) {
+.app-main:has(.advice-page),
+.app-main:has(.dashboard-page) {
   overflow: hidden;
   height: 100vh;
 }
