@@ -8,7 +8,10 @@ import { useLanguage } from "../../i18n"
 export const LoginPage = () => {
   const { login, register } = useAuth()
   const { language, t } = useLanguage()
-  const [mode, setMode] = useState<"login" | "register">("login")
+  const location = useLocation()
+  const queryParams = new URLSearchParams(location.search)
+  const initialMode = queryParams.get("mode") === "register" ? "register" : "login"
+  const [mode, setMode] = useState<"login" | "register">(initialMode)
   type AuthFormState = {
     full_name: string
     email: string
@@ -24,7 +27,6 @@ export const LoginPage = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const navigate = useNavigate()
-  const location = useLocation()
 
   const from = (location.state as { from?: { pathname?: string } } | undefined)?.from?.pathname ?? "/"
 

@@ -36,3 +36,5 @@ coverage.xml
 
 # Ignore profile uploads
 backend/app/uploads/
+
+temp/

@@ -1,12 +1,17 @@
-import { BarChart3, Bot, CreditCard, Globe, LogOut, Moon, PiggyBank, Sun, TrendingUp, User, Monitor, Info } from "lucide-react"
+import { BarChart3, Bot, CreditCard, Globe, Moon, PiggyBank, Sun, TrendingUp, User, Monitor, Info, X, ChevronLeft, ChevronRight } from "lucide-react"
 import { NavLink, useNavigate } from "react-router-dom"
 
-import { useAuth } from "../../hooks/useAuth"
 import { useTheme } from "../../hooks/useTheme"
 import { useLanguage } from "../../i18n"
 
-export const Sidebar = () => {
-  const { logout } = useAuth()
+interface SidebarProps {
+  isOpen?: boolean
+  isCollapsed?: boolean
+  onClose?: () => void
+  onToggleCollapse?: () => void
+}
+
+export const Sidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse }: SidebarProps) => {
   const navigate = useNavigate()
   const { language, setLanguage, t } = useLanguage()
   const { mode, setMode } = useTheme()
@@ -25,15 +30,20 @@ export const Sidebar = () => {
   ]
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isOpen ? 'sidebar--open' : ''}`}>
       <div className="sidebar__brand">
-        <div className="sidebar__logo">ƒ</div>
-        <div>
-          <p className="sidebar__title">Finson</p>
-          <p className="sidebar__subtitle">
-            {language === "mk" ? "AI финансиски советник" : "AI financial advisor"}
-          </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div className="sidebar__logo">F</div>
+          <div>
+            <p className="sidebar__title">Finson</p>
+            <p className="sidebar__subtitle">
+              {language === "mk" ? "AI финансиски советник" : "AI financial advisor"}
+            </p>
+          </div>
         </div>
+        <button className="sidebar__close-btn" onClick={onClose} aria-label="Close menu">
+          <X size={20} />
+        </button>
       </div>
       <nav className="sidebar__nav">
         {navItems.map((item) => (
@@ -101,10 +111,6 @@ export const Sidebar = () => {
           {t("manageBudgets")}
         </button>
       </div>
-      <button className="sidebar__logout" onClick={logout}>
-        <LogOut size={18} />
-        {t("logout")}
-      </button>
     </aside>
   )
 }

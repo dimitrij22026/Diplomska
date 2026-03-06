@@ -287,7 +287,7 @@ export const TransactionsPage = () => {
           ) : isError ? (
             <p>{t("cantShowTransactions")}</p>
           ) : filteredData && filteredData.length > 0 ? (
-            <table className="table">
+            <div className="table-responsive"><div className="table-responsive"><table className="table">
               <thead>
                 <tr>
                   <th>{t("category")}</th>
@@ -334,7 +334,7 @@ export const TransactionsPage = () => {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div></div>
           ) : (
             <p className="no-results">
               {searchTerm ? `${t("noResults")} "${searchTerm}"` : t("noTransactions")}

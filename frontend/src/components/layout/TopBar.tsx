@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react"
-import { Search, User as UserIcon, LogOut, Settings, ChevronDown } from "lucide-react"
+import { Search, User as UserIcon, LogOut, Settings, ChevronDown, Menu } from "lucide-react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { format } from "date-fns"
 import { mk, enUS } from "date-fns/locale"
@@ -9,7 +9,11 @@ import { useSearch } from "../../context/SearchContext"
 import { useLanguage } from "../../i18n"
 import { NotificationDropdown } from "./NotificationDropdown"
 
-export const TopBar = () => {
+interface TopBarProps {
+  onMenuClick: () => void
+}
+
+export const TopBar = ({ onMenuClick }: TopBarProps) => {
   const { user, logout } = useAuth()
   const { searchTerm, handleSearch } = useSearch()
   const { language, t } = useLanguage()
@@ -47,9 +51,14 @@ export const TopBar = () => {
 
   return (
     <header className="topbar">
-      <div>
-        <p className="topbar__title">{t("welcomeBack")}</p>
-        <p className="topbar__date">{format(new Date(), dateFormat, { locale: dateLocale })}</p>
+      <div className="topbar__left">
+        <button className="topbar__menu-btn" onClick={onMenuClick} aria-label="Menu">
+          <Menu size={24} />
+        </button>
+        <div>
+          <p className="topbar__title">{t("welcomeBack")}</p>
+          <p className="topbar__date">{format(new Date(), dateFormat, { locale: dateLocale })}</p>
+        </div>
       </div>
       <div className="topbar__actions">
         {showSearch && (

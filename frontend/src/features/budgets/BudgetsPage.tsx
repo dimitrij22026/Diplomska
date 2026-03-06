@@ -113,7 +113,7 @@ export const BudgetsPage = () => {
           ) : isError ? (
             <p>{language === "mk" ? "Не можеме да ги прикажеме буџетите." : "Cannot display budgets."}</p>
           ) : (
-            <table className="table">
+            <div className="table-responsive"><table className="table">
               <thead>
                 <tr>
                   <th>{t("category")}</th>
@@ -151,7 +151,7 @@ export const BudgetsPage = () => {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
           )}
         </div>
 

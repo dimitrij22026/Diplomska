@@ -17,6 +17,9 @@ export const RequireAuth = ({ children }: PropsWithChildren) => {
   }
 
   if (!token) {
+    if (location.pathname === "/") {
+      return <Navigate to="/welcome" replace />
+    }
     return <Navigate to="/auth/login" replace state={{ from: location }} />
   }
 
