@@ -57,7 +57,7 @@ export const LoginPage = () => {
     <div className="auth-page">
       <form className="auth-card" onSubmit={handleSubmit}>
         <h1>{mode === "login" ? t("login") : t("register")}</h1>
-        <p className="auth-subtitle">{language === "mk" ? "AI финансиски советник за паметно буџетирање" : "AI financial advisor for smart budgeting"}</p>
+        <p className="auth-subtitle">{t("loginSubtitle")}</p>
         {mode === "register" && (
           <input
             className="input"

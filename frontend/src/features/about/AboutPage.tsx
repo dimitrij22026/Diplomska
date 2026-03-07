@@ -14,7 +14,7 @@ const ENTHUSIASM_DATA = [
 ]
 
 export const AboutPage = () => {
-  const { language } = useLanguage()
+  const { language, t } = useLanguage()
   const { mode } = useTheme()
   const isDark = mode === "dark" || (mode === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)
 
@@ -24,11 +24,9 @@ export const AboutPage = () => {
   return (
     <div style={{ maxWidth: "1200px", margin: "0 auto", paddingBottom: "2rem", display: "flex", flexDirection: "column", gap: "2rem" }}>
       <header className="page-header">
-        <h1 className="page-title">{language === "mk" ? "За нас" : "About Us"}</h1>
+        <h1 className="page-title">{t("aboutUs")}</h1>
         <p className="page-description">
-          {language === "mk" 
-            ? "Дознајте повеќе за нашата мисија, визија и контактирајте нè." 
-            : "Learn more about our mission, vision, and get in touch."}
+          {t("aboutUsDesc")}
         </p>
       </header>
 
@@ -38,12 +36,10 @@ export const AboutPage = () => {
         <div className="panel" style={{ display: "flex", flexDirection: "column" }}>
           <h3 className="panel__title" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <Target size={22} color="var(--accent)" />
-            {language === "mk" ? "Нашата Мисија" : "Our Mission"}
+            {t("ourMission")}
           </h3>
           <p style={{ marginTop: "1rem", lineHeight: "1.6", flex: 1 }}>
-            {language === "mk" 
-              ? "Нашата цел е финансиската писменост да ја направиме достапна за секого. Со Finson, сакаме да ви помогнеме да донесувате поумни финансиски одлуки преку моќта на вештачката интелигенција." 
-              : "Our goal is to make financial literacy accessible to everyone. With Finson, we want to help you make smarter financial decisions through the power of Artificial Intelligence."}
+            {t("ourMissionDesc")}
           </p>
         </div>
 

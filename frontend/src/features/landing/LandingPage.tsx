@@ -22,22 +22,22 @@ export function LandingPage() {
           <span>Finson</span>
         </div>
         <div className="landing-nav-links">
-          <button onClick={() => scrollToSection("features")}>Features</button>
-          <button onClick={() => scrollToSection("how-it-works")}>How it Works</button>
-          <button onClick={() => scrollToSection("insights")}>Insights</button>
+          <button onClick={() => scrollToSection("features")}>{t("features")}</button>
+          <button onClick={() => scrollToSection("how-it-works")}>{t("howItWorks")}</button>
+          <button onClick={() => scrollToSection("insights")}>{t("insights")}</button>
         </div>
         <div className="landing-nav-actions">
           <button
             onClick={() => navigate("/auth/login")}
             className="btn-nav-login"
           >
-            Log in
+            {t("logIn")}
           </button>
           <button
             onClick={() => navigate("/auth/login?mode=register")}
             className="btn-nav-register"
           >
-            Get Started
+            {t("getStarted")}
           </button>
         </div>
       </nav>
@@ -46,24 +46,24 @@ export function LandingPage() {
         {/* Hero Section */}
         <section className="landing-section hero-section">
           <h1 className="hero-title">
-            Master Your Finances,<br />
-            <span className="hero-title-highlight">Empower Your Future</span>
+            {t("masterFinances")}<br />
+            <span className="hero-title-highlight">{t("empowerFuture")}</span>
           </h1>
           <p className="hero-subtitle">
-            A comprehensive, intelligent platform designed to track your expenses, optimize your budgets, and provide AI-driven insights for financial growth.
+            {t("heroSubtitle")}
           </p>
           <div className="hero-actions">
             <button
               onClick={() => navigate("/auth/login?mode=register")}
               className="btn-hero-primary"
             >
-              Start for Free
+              {t("startForFree")}
             </button>
             <button
               onClick={() => navigate("/auth/login")}
               className="btn-hero-secondary"
             >
-              Sign In
+              {t("signIn")}
             </button>
           </div>
         </section>
@@ -72,16 +72,16 @@ export function LandingPage() {
         <section id="features" className="landing-section alt-bg">
           <div className="section-inner">
             <div className="section-header">
-              <h2 className="section-title">Everything You Need</h2>
+              <h2 className="section-title">{t("everythingYouNeed")}</h2>
               <p className="section-subtitle">
-                Powerful tools and intelligent analytics packed into one intuitive dashboard.
+                {t("featuresSubtitle")}
               </p>
             </div>
             <div className="features-grid">
               {[
-                { title: "Smart Tracking", desc: "Automatically categorize and monitor all your income and expenses in real-time.", icon: "📊" },
-                { title: "AI Assistant", desc: "Get personalized financial advice based on your spending habits and goals.", icon: "🤖" },
-                { title: "Budget Control", desc: "Set limits on different categories and receive alerts before you overspend.", icon: "💰" }
+                { title: t("smartTracking"), desc: t("smartTrackingDesc"), icon: "📊" },
+                { title: t("aiAssistant"), desc: t("aiAssistantDesc"), icon: "🤖" },
+                { title: t("budgetControl"), desc: t("budgetControlDesc"), icon: "💰" }
               ].map((feature, i) => (
                 <div key={i} className="feature-card">
                   <div className="feature-icon">{feature.icon}</div>
@@ -99,14 +99,14 @@ export function LandingPage() {
         <section id="how-it-works" className="landing-section">
           <div className="section-inner">
             <div className="section-header">
-              <h2 className="section-title">How It Works</h2>
-              <p className="section-subtitle">Start managing your money in 3 simple steps.</p>
+              <h2 className="section-title">{t("howItWorksTitle")}</h2>
+              <p className="section-subtitle">{t("howItWorksSubtitle")}</p>
             </div>
             <div className="steps-grid">
               {[
-                { step: "1", title: "Create an Account", desc: "Sign up securely in seconds." },
-                { step: "2", title: "Add Transactions", desc: "Log your income and expenses easily." },
-                { step: "3", title: "Gain Insights", desc: "Watch your net worth grow over time." }
+                { step: "1", title: t("createAccount"), desc: t("createAccountDesc") },
+                { step: "2", title: t("addTransactions"), desc: t("addTransactionsDesc") },
+                { step: "3", title: t("gainInsights"), desc: t("gainInsightsDesc") }
               ].map((item, i) => (
                 <div key={i} className="step-item">
                   <div className="step-number">
@@ -124,12 +124,17 @@ export function LandingPage() {
         <section id="insights" className="landing-section alt-bg">
           <div className="section-inner insights-row">
             <div className="insights-content">
-              <h2 className="insights-title">Deep Financial Analytics</h2>
+              <h2 className="insights-title">{t("deepFinancialAnalytics")}</h2>
               <p className="insights-desc">
-                Visualize your spending patterns across multiple timeframes. Understand exactly where your money goes with beautiful charts, heatmaps, and category breakdowns. Let our AI highlight potential savings.
+                {t("insightsDesc")}
               </p>
               <ul className="insights-list">
-                {["Monthly trends & forecasting", "Category spending breakdowns", "Net worth tracking", "Customizable reports"].map((item, i) => (
+                {[
+                  t("monthlyTrends"),
+                  t("categoryBreakdowns"),
+                  t("netWorthTracking"),
+                  t("customizableReports")
+                ].map((item, i) => (
                   <li key={i}>
                     <span>✓</span> {item}
                   </li>
@@ -151,14 +156,14 @@ export function LandingPage() {
         <section className="landing-section">
           <div className="section-inner">
             <div className="section-header">
-              <h2 className="section-title">Why Choose Us?</h2>
+              <h2 className="section-title">{t("whyChooseUs")}</h2>
             </div>
             <div className="benefits-grid">
               {[
-                { label: "100%", sub: "Secure" },
-                { label: "AI", sub: "Powered" },
-                { label: "24/7", sub: "Sync" },
-                { label: "0", sub: "Hidden Fees" }
+                { label: "100%", sub: t("secure") },
+                { label: "AI", sub: t("aiPowered") },
+                { label: "24/7", sub: t("sync247") },
+                { label: "0", sub: t("noHiddenFees") }
               ].map((stat, i) => (
                 <div key={i} className="benefit-item">
                   <div className="benefit-value">{stat.label}</div>
@@ -178,12 +183,12 @@ export function LandingPage() {
             <span style={{ fontSize: '1.2rem', color: 'var(--muted)' }}>Finson</span>
           </div>
           <div className="footer-links">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
-            <a href="#">Contact Support</a>
+            <a href="#">{t("privacyPolicy")}</a>
+            <a href="#">{t("termsOfService")}</a>
+            <a href="#">{t("contactSupport")}</a>
           </div>
           <p className="footer-copy">
-            © {new Date().getFullYear()} Finson. All rights reserved.
+            {t("copyright", { year: new Date().getFullYear() })}
           </p>
         </div>
       </footer>

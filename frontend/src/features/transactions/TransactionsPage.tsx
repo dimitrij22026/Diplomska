@@ -256,28 +256,28 @@ export const TransactionsPage = () => {
     className={`period-btn ${transactionsPeriod === "day" ? "period-btn--active" : ""}`}
     onClick={() => setTransactionsPeriod("day")}
   >
-    {language === "mk" ? "Ден" : "Day"}
+    {t("day")}
   </button>
     
   <button
     className={`period-btn ${transactionsPeriod === "month" ? "period-btn--active" : ""}`}
     onClick={() => setTransactionsPeriod("month")}
   >
-    {language === "mk" ? "Месец" : "Month"}
+    {t("month")}
   </button>
 
   <button
     className={`period-btn ${transactionsPeriod === "year" ? "period-btn--active" : ""}`}
     onClick={() => setTransactionsPeriod("year")}
   >
-    {language === "mk" ? "Година" : "Year"}
+    {t("year")}
   </button>
 
   <button
     className={`period-btn ${transactionsPeriod === "all" ? "period-btn--active" : ""}`}
     onClick={() => setTransactionsPeriod("all")}
   >
-    {language === "mk" ? "Сè" : "All"}
+    {t("all")}
   </button>
 </div>
           {isLoading ? (

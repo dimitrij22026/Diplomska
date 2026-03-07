@@ -15,7 +15,7 @@ const DEFAULT_ASSETS: PortfolioAsset[] = [
 ]
 
 export const PortfolioPage = () => {
-  const { language, t } = useLanguage()
+  const { t } = useLanguage()
   const [assets, setAssets] = useState<PortfolioAsset[]>(DEFAULT_ASSETS)
 
   const totalAllocation = useMemo(
@@ -26,7 +26,9 @@ export const PortfolioPage = () => {
   const handleAllocationChange = (index: number, value: string) => {
     const parsed = Number(value)
     setAssets((prev) =>
-      prev.map((asset, i) => (i === index ? { ...asset, allocation: Number.isFinite(parsed) ? parsed : 0 } : asset)),
+      prev.map((asset, i) =>
+        i === index ? { ...asset, allocation: Number.isFinite(parsed) ? parsed : 0 } : asset
+      )
     )
   }
 
@@ -34,28 +36,24 @@ export const PortfolioPage = () => {
     <section>
       <div className="dashboard__header">
         <div>
-          <p className="eyebrow">{language === "mk" ? "инвестиции" : "investments"}</p>
+          <p className="eyebrow">{t("investments")}</p>
           <h1 className="hero-title">{t("portfolio")}</h1>
         </div>
         <div className="dashboard__badge">
-          <span>{language === "mk" ? "Вкупна алокација" : "Total Allocation"}</span>
+          <span>{t("totalAllocation")}</span>
           <strong>{totalAllocation.toFixed(0)}%</strong>
         </div>
       </div>
 
       <div className="panel">
-        <h3 className="panel__title">{language === "mk" ? "Распределба на портфолио" : "Portfolio Allocation"}</h3>
-        <p className="panel__subtitle">
-          {language === "mk"
-            ? "Поставете целна распределба по инструмент."
-            : "Set your target allocation by instrument."}
-        </p>
+        <h3 className="panel__title">{t("portfolioAllocation")}</h3>
+        <p className="panel__subtitle">{t("setTargetAllocation")}</p>
 
         <table className="table">
           <thead>
             <tr>
-              <th>{language === "mk" ? "Симбол" : "Symbol"}</th>
-              <th>{language === "mk" ? "Алокација (%)" : "Allocation (%)"}</th>
+              <th>{t("symbol")}</th>
+              <th>{t("allocationPercent")}</th>
             </tr>
           </thead>
           <tbody>
@@ -78,13 +76,7 @@ export const PortfolioPage = () => {
         </table>
 
         <p className="portfolio-note">
-          {totalAllocation === 100
-            ? language === "mk"
-              ? "Одлично — портфолиото е балансирано на 100%."
-              : "Great — your portfolio is balanced at 100%."
-            : language === "mk"
-              ? "Совет: вкупната алокација треба да биде 100%."
-              : "Tip: total allocation should be 100%."}
+          {totalAllocation === 100 ? t("portfolioBalanced") : t("allocationTip")}
         </p>
       </div>
     </section>

@@ -3,8 +3,10 @@ import { useSearchParams, useNavigate } from "react-router-dom"
 import { CheckCircle, XCircle, Loader2 } from "lucide-react"
 
 import { apiClient } from "../../api/client"
+import { useLanguage } from "../../i18n"
 
 export const VerifyEmailPage = () => {
+  const { t } = useLanguage()
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const token = searchParams.get("token")
@@ -16,7 +18,7 @@ export const VerifyEmailPage = () => {
     const verifyEmail = async () => {
       if (!token) {
         setStatus("error")
-        setMessage("Недостасува токен за верификација")
+        setMessage(t("verifyTokenMissing"))
         return
       }
 
@@ -26,12 +28,12 @@ export const VerifyEmailPage = () => {
         setMessage(response.message)
       } catch (err) {
         setStatus("error")
-        setMessage(err instanceof Error ? err.message : "Верификацијата не успеа")
+        setMessage(err instanceof Error ? err.message : t("verifyFailed"))
       }
     }
 
     verifyEmail()
-  }, [token])
+  }, [token, t])
 
   return (
     <div className="auth-page">
@@ -39,22 +41,22 @@ export const VerifyEmailPage = () => {
         {status === "loading" && (
           <>
             <Loader2 size={48} className="loader-spin" style={{ color: "var(--accent)", margin: "0 auto 1rem" }} />
-            <h2>Се верифицира...</h2>
-            <p className="auth-subtitle">Ве молиме почекајте</p>
+            <h2>{t("verifyInProgress")}</h2>
+            <p className="auth-subtitle">{t("verifyPleaseWait")}</p>
           </>
         )}
 
         {status === "success" && (
           <>
             <CheckCircle size={48} style={{ color: "var(--positive)", margin: "0 auto 1rem" }} />
-            <h2>Email-от е потврден!</h2>
+            <h2>{t("verifySuccessTitle")}</h2>
             <p className="auth-subtitle">{message}</p>
             <button
               className="primary-button"
               style={{ marginTop: "1.5rem", width: "100%" }}
               onClick={() => navigate("/auth/login")}
             >
-              Продолжи кон најава
+              {t("verifyContinueToLogin")}
             </button>
           </>
         )}
@@ -62,14 +64,14 @@ export const VerifyEmailPage = () => {
         {status === "error" && (
           <>
             <XCircle size={48} style={{ color: "var(--negative)", margin: "0 auto 1rem" }} />
-            <h2>Верификацијата не успеа</h2>
+            <h2>{t("verifyFailed")}</h2>
             <p className="auth-subtitle">{message}</p>
             <button
               className="primary-button"
               style={{ marginTop: "1.5rem", width: "100%" }}
               onClick={() => navigate("/auth/login")}
             >
-              Назад кон најава
+              {t("verifyBackToLogin")}
             </button>
           </>
         )}

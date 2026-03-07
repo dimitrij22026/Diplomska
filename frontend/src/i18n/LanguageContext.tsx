@@ -20,9 +20,15 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(STORAGE_KEY, lang)
   }
 
-  // Translation function
-  const t = (key: keyof typeof translations.mk): string => {
-    return translations[language][key] || key
+  // Translation function with interpolation support
+  const t = (key: keyof typeof translations.mk, params?: Record<string, string | number>): string => {
+    let text = translations[language][key] || key
+    if (params) {
+      Object.entries(params).forEach(([param, value]) => {
+        text = text.replace(new RegExp(`{{${param}}}`, 'g'), String(value))
+      })
+    }
+    return text
   }
 
   useEffect(() => {

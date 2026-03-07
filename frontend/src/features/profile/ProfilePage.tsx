@@ -1,6 +1,6 @@
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import type { FormEvent } from "react"
-import { User, Lock, Mail, Calendar, Wallet, AlertTriangle, RefreshCw, Camera } from "lucide-react"
+import { User, Lock, Mail, Calendar, Wallet, AlertTriangle, RefreshCw, Camera, ChevronDown, Search } from "lucide-react"
 
 import { useAuth } from "../../hooks/useAuth"
 import { apiClient } from "../../api/client"
@@ -15,7 +15,44 @@ const formatDate = (dateString: string, lang: string): string => {
   return lang === "mk" ? `${day}.${month}.${year}` : `${month}/${day}/${year}`
 }
 
-const SUPPORTED_CURRENCIES = ["EUR", "USD", "MKD", "GBP", "CHF"]
+const SUPPORTED_CURRENCIES = [
+  "EUR", "USD", "MKD", "GBP", "CHF", "JPY", "CAD", "AUD", "CNY",
+  "SEK", "NOK", "DKK", "PLN", "CZK", "HUF", "RON", "BGN", "HRK",
+  "TRY", "RUB", "BRL", "MXN", "ARS", "ZAR", "INR"
+]
+
+const PREDEFINED_CURRENCIES = ["EUR", "USD", "MKD"]
+
+const getCurrencyName = (code: string): string => {
+  const names: Record<string, string> = {
+    EUR: "Euro",
+    USD: "US Dollar",
+    MKD: "Macedonian Denar",
+    GBP: "British Pound",
+    CHF: "Swiss Franc",
+    JPY: "Japanese Yen",
+    CAD: "Canadian Dollar",
+    AUD: "Australian Dollar",
+    CNY: "Chinese Yuan",
+    SEK: "Swedish Krona",
+    NOK: "Norwegian Krone",
+    DKK: "Danish Krone",
+    PLN: "Polish Złoty",
+    CZK: "Czech Koruna",
+    HUF: "Hungarian Forint",
+    RON: "Romanian Leu",
+    BGN: "Bulgarian Lev",
+    HRK: "Croatian Kuna",
+    TRY: "Turkish Lira",
+    RUB: "Russian Ruble",
+    BRL: "Brazilian Real",
+    MXN: "Mexican Peso",
+    ARS: "Argentine Peso",
+    ZAR: "South African Rand",
+    INR: "Indian Rupee"
+  }
+  return names[code] || code
+}
 
 export const ProfilePage = () => {
   const { user, token, refreshUser } = useAuth()
@@ -23,7 +60,25 @@ export const ProfilePage = () => {
   const [isChangingPassword, setIsChangingPassword] = useState(false)
   const [isChangingCurrency, setIsChangingCurrency] = useState(false)
   const [selectedCurrency, setSelectedCurrency] = useState(user?.currency ?? "EUR")
-  const [convertValues, setConvertValues] = useState(true)
+  const [currencySearch, setCurrencySearch] = useState("")
+  const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false)
+
+  const currencyDropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (currencyDropdownRef.current && !currencyDropdownRef.current.contains(event.target as Node)) {
+        setShowCurrencyDropdown(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const filteredCurrencies = SUPPORTED_CURRENCIES.filter(curr =>
+    curr.toLowerCase().includes(currencySearch.toLowerCase()) && !PREDEFINED_CURRENCIES.includes(curr)
+  )
   const [passwordForm, setPasswordForm] = useState({
     current_password: "",
     new_password: "",
@@ -31,6 +86,8 @@ export const ProfilePage = () => {
   })
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [currencyError, setCurrencyError] = useState<string | null>(null)
+  const [currencySuccess, setCurrencySuccess] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [resendingEmail, setResendingEmail] = useState(false)
   const [currencyLoading, setCurrencyLoading] = useState(false)
@@ -51,7 +108,7 @@ export const ProfilePage = () => {
 
     // Limit to 2MB to match backend
     if (file.size > 2 * 1024 * 1024) {
-      setError(language === "mk" ? "Сликата е преголема. Максимум 2MB." : "Image too large. Maximum 2MB.")
+      setError(t("imageTooLarge"))
       return
     }
 
@@ -72,7 +129,7 @@ export const ProfilePage = () => {
           if (refreshUser) {
             await refreshUser()
           }
-          setSuccess(language === "mk" ? "Профилната слика е ажурирана" : "Profile picture updated")
+          setSuccess(t("profilePictureUpdated"))
         } catch (err) {
           setError(err instanceof Error ? err.message : t("saveFailed"))
         } finally {
@@ -83,7 +140,7 @@ export const ProfilePage = () => {
         }
       }
       reader.onerror = () => {
-        setError(language === "mk" ? "Грешка при читање на сликата" : "Error reading image")
+        setError(t("errorReadingImage"))
         setIsUploadingPhoto(false)
       }
       reader.readAsDataURL(file)
@@ -133,7 +190,7 @@ export const ProfilePage = () => {
     setResendingEmail(true)
     try {
       await apiClient.post("/auth/resend-verification", { email: user.email })
-      setSuccess(language === "mk" ? "Нов email за верификација е испратен!" : "Verification email sent!")
+      setSuccess(t("verificationEmailSent"))
     } catch {
       setError(t("saveFailed"))
     } finally {
@@ -146,9 +203,15 @@ export const ProfilePage = () => {
       setIsChangingCurrency(false)
       return
     }
+
+    // Validate that the selected currency is supported
+    if (!SUPPORTED_CURRENCIES.includes(selectedCurrency)) {
+      setCurrencyError(t("unsupportedCurrency"))
+      return
+    }
     
-    setError(null)
-    setSuccess(null)
+    setCurrencyError(null)
+    setCurrencySuccess(null)
     setCurrencyLoading(true)
     
     try {
@@ -163,7 +226,7 @@ export const ProfilePage = () => {
         "/users/me/change-currency",
         {
           new_currency: selectedCurrency,
-          convert_values: convertValues,
+          convert_values: true,
         },
         { token: token ?? undefined }
       )
@@ -173,20 +236,23 @@ export const ProfilePage = () => {
         await refreshUser()
       }
       
-      const conversionMsg = convertValues && (result.transactions_converted > 0 || result.budgets_converted > 0)
-        ? language === "mk"
-          ? ` Конвертирани: ${result.transactions_converted} трансакции, ${result.budgets_converted} буџети.`
-          : ` Converted: ${result.transactions_converted} transactions, ${result.budgets_converted} budgets.`
+      const conversionMsg = result.transactions_converted > 0 || result.budgets_converted > 0
+        ? ` ${t("convertedItems", { transactions: result.transactions_converted, budgets: result.budgets_converted })}`
         : ""
       
-      setSuccess(
-        language === "mk"
-          ? `Валутата е променета од ${result.old_currency} во ${result.new_currency}.${conversionMsg}`
-          : `Currency changed from ${result.old_currency} to ${result.new_currency}.${conversionMsg}`
+      setCurrencySuccess(
+        t("currencyChanged", { old: result.old_currency, new: result.new_currency }) + conversionMsg
       )
       setIsChangingCurrency(false)
     } catch (err) {
-      setError(err instanceof Error ? err.message : t("saveFailed"))
+      let errorMessage = err instanceof Error ? err.message : t("saveFailed")
+      
+      // Handle Macedonian error message for unsupported currency
+      if (errorMessage.includes("Валутата не е поддржана")) {
+        errorMessage = t("unsupportedCurrency")
+      }
+      
+      setCurrencyError(errorMessage)
     } finally {
       setCurrencyLoading(false)
     }
@@ -233,7 +299,7 @@ export const ProfilePage = () => {
             className="profile-avatar" 
             onClick={!isUploadingPhoto ? handleAvatarClick : undefined}
             style={{ cursor: isUploadingPhoto ? "wait" : "pointer", position: "relative", overflow: "hidden" }}
-            title={language === "mk" ? "Промени профилна слика" : "Change profile picture"}
+            title={t("changeProfilePicture")}
           >
             {user.profile_picture ? (
               <img 
@@ -267,7 +333,7 @@ export const ProfilePage = () => {
             accept="image/jpeg,image/png,image/gif"
             style={{ display: "none" }}
           />
-          <h2 className="profile-name">{user.full_name || (language === "mk" ? "Корисник" : "User")}</h2>
+          <h2 className="profile-name">{user.full_name || t("user")}</h2>
           <p 
             className="profile-email"
             onClick={() => setIsEmailBlurred(false)}
@@ -277,7 +343,7 @@ export const ProfilePage = () => {
               transition: "filter 0.3s ease",
               userSelect: isEmailBlurred ? "none" : "auto"
             }}
-            title={isEmailBlurred ? (language === "mk" ? "Кликни за да го видиш емаилот" : "Click to reveal email") : ""}
+            title={isEmailBlurred ? t("clickToRevealEmail") : ""}
           >
             {user.email}
           </p>
@@ -297,7 +363,7 @@ export const ProfilePage = () => {
                     display: "inline-block",
                     userSelect: isEmailBlurred ? "none" : "auto"
                   }}
-                  title={isEmailBlurred ? (language === "mk" ? "Кликни за да го видиш емаилот" : "Click to reveal email") : ""}
+                  title={isEmailBlurred ? t("clickToRevealEmail") : ""}
                 >
                   {user.email}
                 </span>
@@ -324,55 +390,119 @@ export const ProfilePage = () => {
         <div className="panel">
           <h3 className="panel__title">
             <RefreshCw size={20} />
-            {language === "mk" ? "Промени валута" : "Change Currency"}
+            {t("changeCurrency")}
           </h3>
           <p className="panel__subtitle">
-            {language === "mk" 
-              ? "Променете ја валутата и конвертирајте ги сите износи" 
-              : "Change your currency and convert all amounts"}
+            {t("changeCurrencyDesc")}
           </p>
+
+          {currencySuccess && <p className="auth-success">{currencySuccess}</p>}
+          {currencyError && <p className="auth-error">{currencyError}</p>}
 
           {!isChangingCurrency ? (
             <button
               className="primary-button"
               onClick={() => {
                 setSelectedCurrency(user.currency)
+                setCurrencySearch("")
+                setCurrencyError(null)
+                setCurrencySuccess(null)
                 setIsChangingCurrency(true)
               }}
             >
-              {language === "mk" ? "Промени валута" : "Change Currency"}
+              {t("changeCurrency")}
             </button>
           ) : (
             <div className="currency-form">
               <div className="currency-select-row">
-                <label>{language === "mk" ? "Нова валута:" : "New currency:"}</label>
-                <select
-                  className="input"
-                  value={selectedCurrency}
-                  onChange={(e) => setSelectedCurrency(e.target.value)}
-                >
-                  {SUPPORTED_CURRENCIES.map((curr) => (
-                    <option key={curr} value={curr}>
-                      {curr}
-                    </option>
-                  ))}
-                </select>
+                <label className="currency-label">{t("newCurrency")}</label>
+                <div className="currency-selector-modern" ref={currencyDropdownRef}>
+                  <div 
+                    className={`currency-input-container ${showCurrencyDropdown ? 'focused' : ''}`}
+                    onClick={() => setShowCurrencyDropdown(!showCurrencyDropdown)}
+                  >
+                    <div className="currency-display">
+                      <Wallet size={16} className="currency-icon" />
+                      <span className="currency-code">{selectedCurrency}</span>
+                    </div>
+                    <ChevronDown size={16} className={`dropdown-arrow ${showCurrencyDropdown ? 'rotated' : ''}`} />
+                  </div>
+                  
+                  {showCurrencyDropdown && (
+                    <div className="currency-dropdown-modern">
+                      <div className="currency-search-container">
+                        <Search size={14} className="search-icon" />
+                        <input
+                          type="text"
+                          className="currency-search-input"
+                          placeholder={t("searchCurrency")}
+                          value={currencySearch}
+                          onChange={(e) => {
+                            const value = e.target.value.toUpperCase()
+                            setCurrencySearch(value)
+                            // If exact match, select it
+                            if (SUPPORTED_CURRENCIES.includes(value)) {
+                              setSelectedCurrency(value)
+                            }
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                          autoFocus
+                        />
+                      </div>
+                      
+                      <div className="currency-options">
+                        <div className="currency-section">
+                          <div className="currency-section-title">Popular</div>
+                          {PREDEFINED_CURRENCIES.map((curr) => (
+                            <div
+                              key={curr}
+                              className={`currency-option-modern ${selectedCurrency === curr ? 'selected' : ''}`}
+                              onClick={() => {
+                                setSelectedCurrency(curr)
+                                setCurrencySearch(curr)
+                                setShowCurrencyDropdown(false)
+                              }}
+                            >
+                              <Wallet size={14} className="currency-option-icon" />
+                              <span className="currency-option-code">{curr}</span>
+                              <span className="currency-option-name">{getCurrencyName(curr)}</span>
+                            </div>
+                          ))}
+                        </div>
+                        
+                        {filteredCurrencies.length > 0 && currencySearch && (
+                          <div className="currency-section">
+                            <div className="currency-section-title">All Currencies</div>
+                            {filteredCurrencies.slice(0, 8).map((curr) => (
+                              <div
+                                key={curr}
+                                className={`currency-option-modern ${selectedCurrency === curr ? 'selected' : ''}`}
+                                onClick={() => {
+                                  setSelectedCurrency(curr)
+                                  setCurrencySearch(curr)
+                                  setShowCurrencyDropdown(false)
+                                }}
+                              >
+                                <Wallet size={14} className="currency-option-icon" />
+                                <span className="currency-option-code">{curr}</span>
+                                <span className="currency-option-name">{getCurrencyName(curr)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={convertValues}
-                  onChange={(e) => setConvertValues(e.target.checked)}
-                />
-                {language === "mk" 
-                  ? "Конвертирај ги сите трансакции и буџети" 
-                  : "Convert all transactions and budgets"}
-              </label>
               <div className="password-form-actions">
                 <button
                   type="button"
                   className="secondary-button"
-                  onClick={() => setIsChangingCurrency(false)}
+                  onClick={() => {
+                    setIsChangingCurrency(false)
+                    setCurrencyError(null)
+                  }}
                 >
                   {t("cancel")}
                 </button>
@@ -383,7 +513,7 @@ export const ProfilePage = () => {
                   disabled={currencyLoading}
                 >
                   {currencyLoading 
-                    ? (language === "mk" ? "Се конвертира…" : "Converting…") 
+                    ? t("converting") 
                     : t("save")}
                 </button>
               </div>
