@@ -1,5 +1,6 @@
 ﻿import { useNavigate } from "react-router-dom"
 import { useLanguage } from "../../i18n/useLanguage"
+import { ThemeToggle } from "../../components/ui/ThemeToggle"
 import "./LandingPage.css"
 
 export function LandingPage() {
@@ -27,6 +28,7 @@ export function LandingPage() {
           <button onClick={() => scrollToSection("insights")}>{t("insights")}</button>
         </div>
         <div className="landing-nav-actions">
+          <ThemeToggle />
           <button
             onClick={() => navigate("/auth/login")}
             className="btn-nav-login"

@@ -8,6 +8,7 @@ import { useAuth } from "../../hooks/useAuth"
 import { useSearch } from "../../context/SearchContext"
 import { useLanguage } from "../../i18n"
 import { NotificationDropdown } from "./NotificationDropdown"
+import { ThemeToggle } from "../ui/ThemeToggle"
 
 interface TopBarProps {
   onMenuClick: () => void
@@ -72,6 +73,7 @@ export const TopBar = ({ onMenuClick }: TopBarProps) => {
             />
           </div>
         )}
+        <ThemeToggle />
         <NotificationDropdown />
         <div className="topbar__badge">{user?.currency ?? "EUR"}</div>
         <div className="profile-dropdown-container" ref={profileRef}>

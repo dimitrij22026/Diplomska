@@ -1,7 +1,6 @@
-import { BarChart3, Bot, CreditCard, Globe, Moon, PiggyBank, Sun, TrendingUp, User, Monitor, Info, X, ChevronLeft, ChevronRight } from "lucide-react"
+import { BarChart3, Bot, CreditCard, Globe, PiggyBank, TrendingUp, User, Info, X, ChevronLeft, ChevronRight, Moon, Sun } from "lucide-react"
 import { NavLink, useNavigate } from "react-router-dom"
 
-import { useTheme } from "../../hooks/useTheme"
 import { useLanguage } from "../../i18n"
 
 interface SidebarProps {
@@ -14,7 +13,6 @@ interface SidebarProps {
 export const Sidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse }: SidebarProps) => {
   const navigate = useNavigate()
   const { language, setLanguage, t } = useLanguage()
-  const { mode, setMode } = useTheme()
 
   const navItems = [
     { to: "/", label: t("overview"), icon: <BarChart3 size={18} /> },
@@ -74,36 +72,6 @@ export const Sidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse }: Side
         </button>
       </div>
 
-      <div className="sidebar__theme" role="group" aria-label={language === "mk" ? "Тема" : "Theme"}>
-        <button
-          type="button"
-          className={mode === "light" ? "theme-btn theme-btn--active" : "theme-btn"}
-          onClick={() => setMode("light")}
-          title={language === "mk" ? "Светла" : "Light"}
-        >
-          <Sun size={16} />
-          <span>{language === "mk" ? "Светла" : "Light"}</span>
-        </button>
-        <button
-          type="button"
-          className={mode === "dark" ? "theme-btn theme-btn--active" : "theme-btn"}
-          onClick={() => setMode("dark")}
-          title={language === "mk" ? "Темна" : "Dark"}
-        >
-          <Moon size={16} />
-          <span>{language === "mk" ? "Темна" : "Dark"}</span>
-        </button>
-        <button
-          type="button"
-          className={mode === "system" ? "theme-btn theme-btn--active" : "theme-btn"}
-          onClick={() => setMode("system")}
-          title={language === "mk" ? "Систем" : "System"}
-        >
-          <Monitor size={16} />
-          <span>{language === "mk" ? "Систем" : "System"}</span>
-        </button>
-      </div>
-      
       <div className="sidebar__cta">
         <strong>{t("setNewLimit")}</strong>
         <p>{t("budgetAutomation")}</p>
