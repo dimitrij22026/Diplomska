@@ -18,13 +18,13 @@ export const Sidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse }: Side
     { to: "/", label: t("overview"), icon: <BarChart3 size={18} /> },
     { to: "/transactions", label: t("transactions"), icon: <CreditCard size={18} /> },
     { to: "/budgets", label: t("budgets"), icon: <PiggyBank size={18} /> },
-    { to: "/analytics", label: language === "mk" ? "Аналитика" : "Analytics", icon: <TrendingUp size={18} /> },
+    { to: "/analytics", label: t("analytics"), icon: <TrendingUp size={18} /> },
     { to: "/portfolio", label: t("portfolio"), icon: <TrendingUp size={18} /> },
     { to: "/crypto", label: t("crypto"), icon: <Moon size={18} /> },
     { to: "/stocks", label: t("stocks"), icon: <Sun size={18} /> },
     { to: "/assistant", label: t("aiAdvisor"), icon: <Bot size={18} /> },
     { to: "/profile", label: t("profile"), icon: <User size={18} /> },
-    { to: "/about", label: language === "mk" ? "За нас" : "About Us", icon: <Info size={18} /> },
+    { to: "/about", label: t("aboutUs"), icon: <Info size={18} /> },
   ]
 
   return (
@@ -35,7 +35,7 @@ export const Sidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse }: Side
           <div>
             <p className="sidebar__title">Finson</p>
             <p className="sidebar__subtitle">
-              {language === "mk" ? "AI финансиски советник" : "AI financial advisor"}
+              {t("sidebarSubtitle")}
             </p>
           </div>
         </div>

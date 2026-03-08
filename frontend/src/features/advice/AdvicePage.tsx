@@ -81,12 +81,12 @@ export const AdvicePage = () => {
         <div className="advice-sidebar__header">
           <button className="advice-new-chat-btn" onClick={handleNewChat}>
             <Plus size={18} />
-            {language === "mk" ? "Нов разговор" : "New Chat"}
+            {t("newChat")}
           </button>
           <button 
             className="advice-sidebar__toggle" 
             onClick={() => setSidebarOpen(false)}
-            title="Close sidebar"
+            title={t("closeSidebar")}
           >
             <ChevronLeft size={20} />
           </button>
@@ -108,7 +108,7 @@ export const AdvicePage = () => {
                 <div className="advice-sidebar__item-content">
                   <span className="advice-sidebar__item-title">{conv.title}</span>
                   <span className="advice-sidebar__item-meta">
-                    {conv.message_count} {language === "mk" ? "пораки" : "messages"}
+                    {conv.message_count} {t("messages")}
                   </span>
                 </div>
                 <button
@@ -122,7 +122,7 @@ export const AdvicePage = () => {
             ))
           ) : (
             <p className="advice-sidebar__empty">
-              {language === "mk" ? "Нема разговори" : "No conversations"}
+              {t("noConversationsSidebar")}
             </p>
           )}
         </div>
@@ -149,7 +149,7 @@ export const AdvicePage = () => {
             <button 
               className="advice-sidebar__open-btn" 
               onClick={() => setSidebarOpen(true)}
-              title="Open sidebar"
+              title={t("openSidebar")}
             >
               <MessageSquare size={20} />
             </button>
@@ -161,7 +161,7 @@ export const AdvicePage = () => {
             <div>
               <h1 className="advice-header__title">
                 {isNewChat 
-                  ? (language === "mk" ? "Нов разговор" : "New Chat")
+                  ? t("newChat")
                   : t("aiAdvisor")
                 }
               </h1>
@@ -215,14 +215,14 @@ export const AdvicePage = () => {
                 <h3>{t("aiAdvisor")}</h3>
                 <p>{t("noConversations")}</p>
                 <div className="advice-suggestions">
-                  <button onClick={() => setQuestion(language === "mk" ? "Како можам да заштедам повеќе?" : "How can I save more money?")}>
-                    {language === "mk" ? "💰 Како да заштедам?" : "💰 How to save?"}
+                  <button onClick={() => setQuestion(t("suggestSaveQuestion"))}>
+                    {t("suggestSaveLabel")}
                   </button>
-                  <button onClick={() => setQuestion(language === "mk" ? "Анализирај ги моите трошоци" : "Analyze my spending")}>
-                    {language === "mk" ? "📊 Анализа на трошоци" : "📊 Spending analysis"}
+                  <button onClick={() => setQuestion(t("suggestSpendingQuestion"))}>
+                    {t("suggestSpendingLabel")}
                   </button>
-                  <button onClick={() => setQuestion(language === "mk" ? "Дај ми совет за буџетирање" : "Give me budgeting advice")}>
-                    {language === "mk" ? "📝 Совети за буџет" : "📝 Budget tips"}
+                  <button onClick={() => setQuestion(t("suggestBudgetQuestion"))}>
+                    {t("suggestBudgetLabel")}
                   </button>
                 </div>
               </div>
@@ -270,7 +270,7 @@ export const AdvicePage = () => {
               </button>
             </div>
             <p className="advice-input-hint">
-              {language === "mk" ? "Притисни Enter за испраќање" : "Press Enter to send"}
+              {t("pressEnterToSend")}
             </p>
           </form>
         </div>

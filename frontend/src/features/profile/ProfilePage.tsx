@@ -25,31 +25,31 @@ const PREDEFINED_CURRENCIES = ["EUR", "USD", "MKD"]
 
 const getCurrencyName = (code: string): string => {
   const names: Record<string, string> = {
-    EUR: "Euro",
-    USD: "US Dollar",
-    MKD: "Macedonian Denar",
-    GBP: "British Pound",
-    CHF: "Swiss Franc",
-    JPY: "Japanese Yen",
-    CAD: "Canadian Dollar",
-    AUD: "Australian Dollar",
-    CNY: "Chinese Yuan",
-    SEK: "Swedish Krona",
-    NOK: "Norwegian Krone",
-    DKK: "Danish Krone",
-    PLN: "Polish Złoty",
-    CZK: "Czech Koruna",
-    HUF: "Hungarian Forint",
-    RON: "Romanian Leu",
-    BGN: "Bulgarian Lev",
-    HRK: "Croatian Kuna",
-    TRY: "Turkish Lira",
-    RUB: "Russian Ruble",
-    BRL: "Brazilian Real",
-    MXN: "Mexican Peso",
-    ARS: "Argentine Peso",
-    ZAR: "South African Rand",
-    INR: "Indian Rupee"
+    EUR: "currency_EUR",
+    USD: "currency_USD",
+    MKD: "currency_MKD",
+    GBP: "currency_GBP",
+    CHF: "currency_CHF",
+    JPY: "currency_JPY",
+    CAD: "currency_CAD",
+    AUD: "currency_AUD",
+    CNY: "currency_CNY",
+    SEK: "currency_SEK",
+    NOK: "currency_NOK",
+    DKK: "currency_DKK",
+    PLN: "currency_PLN",
+    CZK: "currency_CZK",
+    HUF: "currency_HUF",
+    RON: "currency_RON",
+    BGN: "currency_BGN",
+    HRK: "currency_HRK",
+    TRY: "currency_TRY",
+    RUB: "currency_RUB",
+    BRL: "currency_BRL",
+    MXN: "currency_MXN",
+    ARS: "currency_ARS",
+    ZAR: "currency_ZAR",
+    INR: "currency_INR"
   }
   return names[code] || code
 }
@@ -452,7 +452,7 @@ export const ProfilePage = () => {
                       
                       <div className="currency-options">
                         <div className="currency-section">
-                          <div className="currency-section-title">Popular</div>
+                          <div className="currency-section-title">{t("popularCurrencies")}</div>
                           {PREDEFINED_CURRENCIES.map((curr) => (
                             <div
                               key={curr}
@@ -465,14 +465,14 @@ export const ProfilePage = () => {
                             >
                               <Wallet size={14} className="currency-option-icon" />
                               <span className="currency-option-code">{curr}</span>
-                              <span className="currency-option-name">{getCurrencyName(curr)}</span>
+                              <span className="currency-option-name">{t(getCurrencyName(curr))}</span>
                             </div>
                           ))}
                         </div>
                         
                         {filteredCurrencies.length > 0 && currencySearch && (
                           <div className="currency-section">
-                            <div className="currency-section-title">All Currencies</div>
+                            <div className="currency-section-title">{t("allCurrencies")}</div>
                             {filteredCurrencies.slice(0, 8).map((curr) => (
                               <div
                                 key={curr}
@@ -485,7 +485,7 @@ export const ProfilePage = () => {
                               >
                                 <Wallet size={14} className="currency-option-icon" />
                                 <span className="currency-option-code">{curr}</span>
-                                <span className="currency-option-name">{getCurrencyName(curr)}</span>
+                                <span className="currency-option-name">{t(getCurrencyName(curr))}</span>
                               </div>
                             ))}
                           </div>

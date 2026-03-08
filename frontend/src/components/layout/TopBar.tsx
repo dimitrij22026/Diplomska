@@ -99,7 +99,7 @@ export const TopBar = ({ onMenuClick }: TopBarProps) => {
           {isProfileOpen && (
             <div className="profile-dropdown-panel">
               <div className="profile-dropdown-header">
-                <p>{user?.full_name ?? (language === "mk" ? "Корисник" : "User")}</p>
+                <p>{user?.full_name ?? t("user")}</p>
                 {/* <span>{user?.email}</span> */}
               </div>
               
@@ -108,7 +108,7 @@ export const TopBar = ({ onMenuClick }: TopBarProps) => {
                 onClick={handleProfileClick}
               >
                 <Settings size={16} />
-                {t("profileSettings") || (language === "mk" ? "Подесувања" : "Profile Settings")}
+                {t("profileSettings")}
               </button>
               
               <div className="profile-dropdown-separator"></div>
@@ -118,7 +118,7 @@ export const TopBar = ({ onMenuClick }: TopBarProps) => {
                 onClick={handleLogout}
               >
                 <LogOut size={16} />
-                {t("logout") || (language === "mk" ? "Одјави се" : "Logout")}
+                {t("logout")}
               </button>
             </div>
           )}

@@ -689,10 +689,10 @@ export const AnalyticsPage = () => {
         <div className="panel__header">
           <div>
             <h3 className="panel__title">
-              {language === "mk" ? "📈 Тренд на заштеди" : "📈 Savings Trend"}
+              📈 {t("savingsTrend")}
             </h3>
             <p className="panel__subtitle">
-              {language === "mk" ? "Твојот биланс низ времето" : "Your balance over time"}
+              {t("balanceOverTime")}
             </p>
           </div>
           <div className="period-selector">
@@ -734,7 +734,7 @@ export const AnalyticsPage = () => {
                   stroke="#6366f1"
                   strokeWidth={3}
                   dot={{ fill: "#6366f1", strokeWidth: 2 }}
-                  name={language === "mk" ? "Заштеди" : "Savings"}
+                  name={t("savings")}
                 />
               </LineChart>
             </ResponsiveContainer>

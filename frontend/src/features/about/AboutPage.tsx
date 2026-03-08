@@ -14,7 +14,7 @@ const ENTHUSIASM_DATA = [
 ]
 
 export const AboutPage = () => {
-  const { language, t } = useLanguage()
+  const { t } = useLanguage()
   const { mode } = useTheme()
   const isDark = mode === "dark" || (mode === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)
 
@@ -47,12 +47,10 @@ export const AboutPage = () => {
         <div className="panel" style={{ display: "flex", flexDirection: "column" }}>
           <h3 className="panel__title" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <Shield size={22} color="var(--accent)" />
-            {language === "mk" ? "Нашата Визија" : "Our Vision"}
+            {t("ourVision")}
           </h3>
           <p style={{ marginTop: "1rem", lineHeight: "1.6", flex: 1 }}>
-            {language === "mk"
-              ? "Градиме свет каде што управувањето со пари е лесно, безбедно и достапно преку технолошки иновации кои работат во ваша корист."
-              : "We are building a world where money management is easy, secure, and accessible through technological innovations that work in your favor."}
+            {t("ourVisionDesc")}
           </p>
         </div>
 
@@ -60,12 +58,10 @@ export const AboutPage = () => {
         <div className="panel" style={{ display: "flex", flexDirection: "column" }}>
           <h3 className="panel__title" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <Users size={22} color="var(--accent)" />
-            {language === "mk" ? "Контакт" : "Contact Us"}
+            {t("contactUs")}
           </h3>
           <p style={{ marginTop: "1rem", marginBottom: "1.5rem" }}>
-            {language === "mk"
-              ? "Имате прашање или идеја? Контактирајте нè преку следниве канали:"
-              : "Have a question or idea? Reach out to us via the following channels:"}
+            {t("contactUsDesc")}
           </p>
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             <a href="mailto:hello@finson.app" style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--accent)", textDecoration: "none" }}>
@@ -78,7 +74,7 @@ export const AboutPage = () => {
             </a>
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--text)" }}>
               <Heart size={20} color="var(--negative)" />
-              {language === "mk" ? "Направено со љубов" : "Made with love"}
+              {t("madeWithLove")}
             </div>
           </div>
         </div>
@@ -88,28 +84,28 @@ export const AboutPage = () => {
       <div className="panel">
         <h3 className="panel__title" style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1.5rem" }}>
           <Sparkles size={22} color="var(--accent)" />
-          {language === "mk" ? "Нашите Вредности" : "Our Core Values"}
+          {t("ourCoreValues")}
         </h3>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.5rem" }}>
           <div style={{ padding: "1.5rem", backgroundColor: isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)", borderRadius: "12px", border: "1px solid var(--border)" }}>
             <Zap size={28} color="var(--accent)" style={{ marginBottom: "1rem" }} />
-            <h4 style={{ marginBottom: "0.5rem", fontSize: "1.1rem" }}>{language === "mk" ? "Брзина & Ефикасност" : "Speed & Efficiency"}</h4>
+            <h4 style={{ marginBottom: "0.5rem", fontSize: "1.1rem" }}>{t("speedEfficiency")}</h4>
             <p style={{ fontSize: "0.95rem", color: "var(--muted)", lineHeight: "1.5" }}>
-              {language === "mk" ? "Инстантни финансиски увиди и анализи на вашите трошоци овозможени од напредна вештачка интелигенција." : "Instant financial insights and analysis of your expenses powered by advanced artificial intelligence."}
+              {t("speedEfficiencyDesc")}
             </p>
           </div>
           <div style={{ padding: "1.5rem", backgroundColor: isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)", borderRadius: "12px", border: "1px solid var(--border)" }}>
             <Lock size={28} color="var(--accent)" style={{ marginBottom: "1rem" }} />
-            <h4 style={{ marginBottom: "0.5rem", fontSize: "1.1rem" }}>{language === "mk" ? "Приватност & Безбедност" : "Privacy & Security"}</h4>
+            <h4 style={{ marginBottom: "0.5rem", fontSize: "1.1rem" }}>{t("privacySecurity")}</h4>
             <p style={{ fontSize: "0.95rem", color: "var(--muted)", lineHeight: "1.5" }}>
-              {language === "mk" ? "Вашите податоци се безбедни, енкриптирани и никогаш не се споделуваат со злонамерни трети страни." : "Your data is secure, encrypted, and never shared with malicious third parties."}
+              {t("privacySecurityDesc")}
             </p>
           </div>
           <div style={{ padding: "1.5rem", backgroundColor: isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)", borderRadius: "12px", border: "1px solid var(--border)" }}>
             <Users size={28} color="var(--accent)" style={{ marginBottom: "1rem" }} />
-            <h4 style={{ marginBottom: "0.5rem", fontSize: "1.1rem" }}>{language === "mk" ? "Интуитивен Дизајн" : "Intuitive Design"}</h4>
+            <h4 style={{ marginBottom: "0.5rem", fontSize: "1.1rem" }}>{t("intuitiveDesign")}</h4>
             <p style={{ fontSize: "0.95rem", color: "var(--muted)", lineHeight: "1.5" }}>
-              {language === "mk" ? "Создадено да биде лесно и минималистичко за користење, дури и за целосни почетници во финансиите." : "Created to be easy and minimalist to use, even for complete beginners in personal finance."}
+              {t("intuitiveDesignDesc")}
             </p>
           </div>
         </div>
@@ -118,10 +114,10 @@ export const AboutPage = () => {
       {/* Chart Panel */}
       <div className="panel">
         <h3 className="panel__title">
-          🚀 {language === "mk" ? "Нашиот ентузијазам за проектот" : "Our Enthusiasm for the Project"}
+          🚀 {t("projectEnthusiasm")}
         </h3>
         <p className="panel__subtitle" style={{ marginBottom: "2rem" }}>
-          {language === "mk" ? "Како што расте проектот, така расте и нашата мотивација!" : "As the project grows, so does our motivation!"}
+          {t("projectEnthusiasmDesc")}
         </p>
         
         <div style={{ height: "400px", width: "100%" }}>
@@ -150,7 +146,7 @@ export const AboutPage = () => {
                 stroke={chartColor} 
                 fillOpacity={1} 
                 fill="url(#colorEnthusiasm)" 
-                name={language === "mk" ? "Ентузијазам (Level)" : "Enthusiasm (Level)"}
+                name={t("enthusiasmLevel")}
               />
             </AreaChart>
           </ResponsiveContainer>
@@ -163,12 +159,10 @@ export const AboutPage = () => {
         <div className="panel" style={{ display: "flex", flexDirection: "column" }}>
           <h3 className="panel__title" style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
             <Code size={22} color="var(--accent)" />
-            {language === "mk" ? "Технологии" : "Tech Stack"}
+            {t("techStack")}
           </h3>
           <p style={{ marginBottom: "1.5rem", lineHeight: "1.6", color: "var(--muted)" }}>
-            {language === "mk" 
-              ? "Оваа платформа е изградена со модерни мрежни технологии за да обезбеди мазно и сигурно искуство:" 
-              : "This platform is built with modern web technologies to ensure a smooth and secure experience:"}
+            {t("techStackDesc")}
           </p>
           <ul style={{ listStyleType: "none", padding: 0, display: "flex", flexDirection: "column", gap: "1rem", flex: 1 }}>
             <li style={{ display: "flex", alignItems: "center", gap: "0.75rem", fontSize: "1.05rem" }}>
@@ -187,7 +181,7 @@ export const AboutPage = () => {
               <div style={{ padding: "0.5rem", backgroundColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)", borderRadius: "8px" }}>
                 <Sparkles size={20} color="var(--text)" />
               </div>
-              <span>{language === "mk" ? "Напредна AI Интеграција" : "Advanced AI Integration"}</span>
+              <span>{t("advancedAIIntegration")}</span>
             </li>
           </ul>
         </div>
@@ -197,10 +191,10 @@ export const AboutPage = () => {
               <Github size={36} color="white" />
             </div>
             <h3 style={{ fontSize: "1.6rem", marginBottom: "1rem", color: "var(--text)", fontWeight: 600 }}>
-               {language === "mk" ? "Проект со отворен код" : "Open Source Project"}
+               {t("openSourceProject")}
             </h3>
             <p style={{ color: "var(--muted)", marginBottom: "1.5rem", maxWidth: "80%", lineHeight: "1.6" }}>
-              {language === "mk" ? "Проверете го изворниот код, придонесете со идеи и придружете се кон заедницата на GitHub!" : "Check out the source code, contribute ideas, and join the community on GitHub!"}
+              {t("openSourceDesc")}
             </p>
             <a 
               href="https://github.com/dimitrij22026/Finson" 
@@ -219,7 +213,7 @@ export const AboutPage = () => {
               }}
             >
               <Github size={20} />
-              {language === "mk" ? "Оди на GitHub" : "Go to GitHub"}
+              {t("goToGitHub")}
             </a>
         </div>
 

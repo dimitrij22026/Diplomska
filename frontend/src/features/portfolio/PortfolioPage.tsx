@@ -295,11 +295,11 @@ export const PortfolioPage = () => {
           <div className="pf-card-icon" style={{ background: "rgba(99,102,241,0.15)", color: "#6366f1" }}>
             <Wallet size={20} />
           </div>
-          <p className="stat-card__label">{language === "mk" ? "Вкупна вредност" : "Total Value"}</p>
+          <p className="stat-card__label">{t("totalValue")}</p>
           <p className="stat-card__value">{formatter.format(totalValue)}</p>
           <p className={`stat-card__trend ${dayChange >= 0 ? "trend--positive" : "trend--negative"}`}>
             {dayChange >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
-            {" "}{dayChange >= 0 ? "+" : ""}{formatter.format(dayChange)} ({dayChangePct >= 0 ? "+" : ""}{dayChangePct.toFixed(2)}%) {language === "mk" ? "денес" : "today"}
+            {" "}{dayChange >= 0 ? "+" : ""}{formatter.format(dayChange)} ({dayChangePct >= 0 ? "+" : ""}{dayChangePct.toFixed(2)}%) {t("today")}
           </p>
         </article>
 
@@ -307,12 +307,12 @@ export const PortfolioPage = () => {
           <div className="pf-card-icon" style={{ background: "rgba(34,197,94,0.15)", color: "#22c55e" }}>
             <TrendingUp size={20} />
           </div>
-          <p className="stat-card__label">{language === "mk" ? "Вкупна добивка/загуба" : "Total Gain/Loss"}</p>
+          <p className="stat-card__label">{t("totalGainLoss")}</p>
           <p className="stat-card__value" style={{ color: totalGain >= 0 ? "var(--positive)" : "var(--negative)" }}>
             {totalGain >= 0 ? "+" : ""}{formatter.format(totalGain)}
           </p>
           <p className={`stat-card__trend ${totalGain >= 0 ? "trend--positive" : "trend--negative"}`}>
-            {totalGainPct >= 0 ? "+" : ""}{totalGainPct.toFixed(2)}% {language === "mk" ? "од инвестирано" : "all-time"}
+            {totalGainPct >= 0 ? "+" : ""}{totalGainPct.toFixed(2)}% {t("allTime")}
           </p>
         </article>
 
@@ -320,10 +320,10 @@ export const PortfolioPage = () => {
           <div className="pf-card-icon" style={{ background: "rgba(245,158,11,0.15)", color: "#f59e0b" }}>
             <Target size={20} />
           </div>
-          <p className="stat-card__label">{language === "mk" ? "Инвестирано" : "Total Invested"}</p>
+          <p className="stat-card__label">{t("totalInvested")}</p>
           <p className="stat-card__value">{formatter.format(totalCost)}</p>
           <p className="stat-card__trend" style={{ color: "var(--muted)" }}>
-            {holdings.length} {language === "mk" ? "позиции" : "holdings"}
+            {holdings.length} {t("holdings")}
           </p>
         </article>
 
@@ -331,7 +331,7 @@ export const PortfolioPage = () => {
           <div className="pf-card-icon" style={{ background: "rgba(6,182,212,0.15)", color: "#06b6d4" }}>
             <Briefcase size={20} />
           </div>
-          <p className="stat-card__label">{language === "mk" ? "Најдобра позиција" : "Best Performer"}</p>
+          <p className="stat-card__label">{t("bestPerformer")}</p>
           <p className="stat-card__value" style={{ fontSize: "1.4rem" }}>
             {holdings.length > 0
               ? holdings.reduce((best, h) => {
@@ -350,7 +350,7 @@ export const PortfolioPage = () => {
             const gain = ((best.currentPrice - best.avgCost) / best.avgCost) * 100
             return (
               <p className="stat-card__trend trend--positive">
-                +{gain.toFixed(1)}% {language === "mk" ? "раст" : "return"}
+                +{gain.toFixed(1)}% {t("return")}
               </p>
             )
           })()}
@@ -365,9 +365,9 @@ export const PortfolioPage = () => {
             <div>
               <h3 className="panel__title">
                 <BarChart3 size={18} style={{ verticalAlign: "middle", marginRight: 8 }} />
-                {language === "mk" ? "Перформанси на портфолио" : "Portfolio Performance"}
+                {t("portfolioPerformance")}
               </h3>
-              <p className="panel__subtitle">{language === "mk" ? "Вредност во последните 12 месеци" : "Value over the last 12 months"}</p>
+              <p className="panel__subtitle">{t("valueOverLast12Months")}</p>
             </div>
           </div>
           <ResponsiveContainer width="100%" height={260}>
@@ -383,7 +383,7 @@ export const PortfolioPage = () => {
               <YAxis tick={{ fontSize: 11, fill: "var(--muted)" }} axisLine={false} tickLine={false}
                 tickFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(0)}K` : String(v)} width={55} />
               <Tooltip
-                formatter={(v: number) => [formatter.format(v), language === "mk" ? "Вредност" : "Value"]}
+                  formatter={(v: number) => [formatter.format(v), t("value")]}
                 contentStyle={{ background: "var(--card-strong)", border: "1px solid var(--border)", borderRadius: 12, fontSize: 12 }}
               />
               <Area type="monotone" dataKey="value" stroke="#6366f1" strokeWidth={2.5} fill="url(#pfGrad)" dot={false} />
@@ -399,7 +399,7 @@ export const PortfolioPage = () => {
                 <PieChartIcon size={18} style={{ verticalAlign: "middle", marginRight: 8 }} />
                 {t("portfolioAllocation")}
               </h3>
-              <p className="panel__subtitle">{language === "mk" ? "По инструмент" : "By holding"}</p>
+              <p className="panel__subtitle">{t("byHolding")}</p>
             </div>
           </div>
           <div className="pf-pie-wrap">
@@ -438,7 +438,7 @@ export const PortfolioPage = () => {
               {allocationData.length > 6 && (
                 <div className="pf-pie-legend-item">
                   <span className="pf-pie-dot" style={{ background: "var(--muted)" }} />
-                  <span className="pf-pie-label">{language === "mk" ? "Останато" : "Other"}</span>
+                  <span className="pf-pie-label">{t("other")}</span>
                   <span className="pf-pie-pct">
                     {totalValue > 0
                       ? (allocationData.slice(6).reduce((s, i) => s + i.value, 0) / totalValue * 100).toFixed(1)
@@ -453,8 +453,8 @@ export const PortfolioPage = () => {
 
       {/* Asset Class Breakdown */}
       <div className="panel pf-type-panel">
-        <h3 className="panel__title">{language === "mk" ? "Распределба по тип" : "Asset Class Breakdown"}</h3>
-        <p className="panel__subtitle">{language === "mk" ? "Диверзификација на портфолиото" : "Portfolio diversification"}</p>
+        <h3 className="panel__title">{t("assetClassBreakdown")}</h3>
+        <p className="panel__subtitle">{t("portfolioDiversification")}</p>
         <div className="pf-type-bars">
           {typeAllocation.map(({ type, value, pct }) => (
             <div key={type} className="pf-type-row">
@@ -478,12 +478,12 @@ export const PortfolioPage = () => {
       <div className="panel pf-holdings-panel">
         <div className="panel__header">
           <div>
-            <h3 className="panel__title">{language === "mk" ? "Позиции" : "Holdings"}</h3>
-            <p className="panel__subtitle">{language === "mk" ? "Вашите инвестициски позиции" : "Your investment positions"}</p>
+            <h3 className="panel__title">{t("holdingsTitle")}</h3>
+            <p className="panel__subtitle">{t("yourInvestmentPositions")}</p>
           </div>
           <button className="primary-button pf-add-btn" onClick={() => setShowAddForm((v) => !v)}>
             <Plus size={16} />
-            {language === "mk" ? "Додади" : "Add"}
+            {t("add")}
           </button>
         </div>
 
@@ -502,7 +502,7 @@ export const PortfolioPage = () => {
                 />
               </div>
               <div className="pf-form-group">
-                <label>{language === "mk" ? "Име" : "Name"}</label>
+                <label>{t("name")}</label>
                 <input
                   className="input"
                   placeholder="Apple Inc."
@@ -541,7 +541,7 @@ export const PortfolioPage = () => {
                 </div>
               </div>
               <div className="pf-form-group">
-                <label>{language === "mk" ? "Количина" : "Shares"}</label>
+                <label>{t("shares")}</label>
                 <input
                   className="input" type="number" min="0" step="any"
                   value={form.shares}
@@ -549,7 +549,7 @@ export const PortfolioPage = () => {
                 />
               </div>
               <div className="pf-form-group">
-                <label>{language === "mk" ? "Просечна цена" : "Avg Cost"}</label>
+                <label>{t("avgCost")}</label>
                 <input
                   className="input" type="number" min="0" step="any"
                   value={form.avgCost}
@@ -557,7 +557,7 @@ export const PortfolioPage = () => {
                 />
               </div>
               <div className="pf-form-group">
-                <label>{language === "mk" ? "Тековна цена" : "Current Price"}</label>
+                <label>{t("currentPrice")}</label>
                 <input
                   className="input" type="number" min="0" step="any"
                   value={form.currentPrice}
@@ -582,14 +582,14 @@ export const PortfolioPage = () => {
             <thead>
               <tr>
                 <th>{t("symbol")}</th>
-                <th>{language === "mk" ? "Тип" : "Type"}</th>
-                <th style={{ textAlign: "right" }}>{language === "mk" ? "Количина" : "Shares"}</th>
-                <th style={{ textAlign: "right" }}>{language === "mk" ? "Просечна цена" : "Avg Cost"}</th>
-                <th style={{ textAlign: "right" }}>{language === "mk" ? "Цена" : "Price"}</th>
-                <th style={{ textAlign: "right" }}>{language === "mk" ? "Вредност" : "Value"}</th>
-                <th style={{ textAlign: "right" }}>{language === "mk" ? "Добивка/Загуба" : "Gain/Loss"}</th>
+                <th>{t("type")}</th>
+                <th style={{ textAlign: "right" }}>{t("shares")}</th>
+                <th style={{ textAlign: "right" }}>{t("avgCost")}</th>
+                <th style={{ textAlign: "right" }}>{t("price")}</th>
+                <th style={{ textAlign: "right" }}>{t("value")}</th>
+                <th style={{ textAlign: "right" }}>{t("gainLoss")}</th>
                 <th style={{ textAlign: "right" }}>{t("allocationPercent")}</th>
-                <th style={{ textAlign: "right" }}>{language === "mk" ? "24ч" : "24h"}</th>
+                <th style={{ textAlign: "right" }}>{t("24h")}</th>
                 <th></th>
               </tr>
             </thead>
@@ -696,7 +696,7 @@ export const PortfolioPage = () => {
               {holdings.length === 0 && (
                 <tr>
                   <td colSpan={10} style={{ textAlign: "center", padding: "3rem", color: "var(--muted)" }}>
-                    {language === "mk" ? "Нема позиции. Додадете ја вашата прва инвестиција." : "No holdings yet. Add your first investment."}
+                    {t("noHoldingsYet")}
                   </td>
                 </tr>
               )}
@@ -708,23 +708,23 @@ export const PortfolioPage = () => {
       {/* Footer Stats */}
       <div className="pf-footer-row">
         <div className="panel pf-footer-stat">
-          <span className="pf-footer-label">{language === "mk" ? "Портфолио статус" : "Portfolio Status"}</span>
+          <span className="pf-footer-label">{t("portfolioStatus")}</span>
           <span className={`pf-footer-badge ${totalGain >= 0 ? "pf-footer-badge--positive" : "pf-footer-badge--negative"}`}>
             {totalGain >= 0
-              ? (language === "mk" ? "Профитабилно" : "Profitable")
-              : (language === "mk" ? "Во загуба" : "In Loss")}
+              ? t("profitable")
+              : t("inLoss")}
           </span>
         </div>
         <div className="panel pf-footer-stat">
-          <span className="pf-footer-label">{language === "mk" ? "Број на типови" : "Asset Types"}</span>
+          <span className="pf-footer-label">{t("assetTypes")}</span>
           <strong>{typeAllocation.length}</strong>
         </div>
         <div className="panel pf-footer-stat">
-          <span className="pf-footer-label">{language === "mk" ? "Вкупни позиции" : "Total Positions"}</span>
+          <span className="pf-footer-label">{t("totalPositions")}</span>
           <strong>{holdings.length}</strong>
         </div>
         <div className="panel pf-footer-stat">
-          <span className="pf-footer-label">{language === "mk" ? "Просечна добивка" : "Avg Return"}</span>
+          <span className="pf-footer-label">{t("avgReturn")}</span>
           <strong style={{ color: totalGainPct >= 0 ? "var(--positive)" : "var(--negative)" }}>
             {totalGainPct >= 0 ? "+" : ""}{totalGainPct.toFixed(2)}%
           </strong>
