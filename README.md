@@ -1,131 +1,184 @@
-# App Launch
-
-# Backend
-
-cd backend; $env:PYTHONPATH="backend"; python -m uvicorn app.main:app --host 127.0.0.1 --port 8001
-
-# frontend:
-
-cd frontend; npm run dev
-
-Repo:
-https://github.com/dimitrij22026/Diplomska
-
-
 # AI-Powered Personal Finance Advisor
 
-A comprehensive personal finance management application that uses AI to provide personalized financial advice, budget recommendations, and spending insights through an intuitive web interface.
+Personal finance web app with a FastAPI backend and React + Vite frontend. The project includes budgeting, transaction tracking, savings goals, analytics, profile management, market data views, and an AI assistant flow.
 
+Repository: `https://github.com/dimitrij22026/Diplomska`
 
-# Prerequisites
+## Tech Stack
+
+Backend:
+
+- FastAPI
+- SQLAlchemy
+- Alembic
+- Pydantic v2
+- JWT auth (`python-jose`)
+- `passlib` for password hashing
+- `httpx` for external API calls
+
+Frontend:
+
+- React 19
+- TypeScript
+- Vite
+- React Router
+- TanStack Query
+- Recharts
+- Zod
+
+## Prerequisites
+
 - Python 3.11+
 - Node.js 18+
-- MySQL 8.0+
-- Git
+- npm
+- Optional: MySQL 8+ (if not using SQLite)
 
+## Quick Start
 
-# Backend Setup
+### 1. Backend
 
-1. **Navigate to backend directory:**
-   cd backend
-
-2. **Create virtual environment:**
-   python -m venv .venv
-   # Windows
-   .venv\Scripts\activate
-   # macOS/Linux
-   source .venv/bin/activate
-
-3. **Install dependencies:**
-   pip install -r requirements.txt
-
-4. **Set up environment variables:**
-   cp .env.example .env
-   # Edit .env with your database credentials and OpenAI API key
-
-5. **Start the development server:**
-   uvicorn app.main:app --reload
-
-   # API will be available at http://localhost:8000
-   # Documentation at http://localhost:8000/docs
-
-# Frontend Setup
-
-1. **Navigate to frontend directory:**
-   ```bash
-   cd frontend
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Start the development server:**
-   ```bash
-   npm run dev
-   ```
-
-   Frontend will be available at `http://localhost:5173`
-
-#  Technology Stack
-
-# Backend
-- **FastAPI**: Modern Python web framework
-- **SQLAlchemy**: SQL toolkit and ORM
-- **SQLite**: Default database (automatic table creation)
-- **PyMySQL**: Optional MySQL database connector
-- **Pydantic**: Data validation
-- **PassLib**: Password hashing
-- **Python-JOSE**: JWT token handling
-
-# Frontend
-- **React 19**: UI library with hooks
-- **TypeScript**: Type-safe JavaScript
-- **Vite**: Fast build tool and dev server
-- **React Router**: Client-side routing
-- **TanStack Query**: Data fetching and caching
-- **Recharts**: Chart library for analytics
-- **Zod**: Schema validation
-- **Lucide React**: Icon library
-
-#  Database Schema
-
-The application uses MySQL with the following main entities:
-- **Users**: User accounts with authentication
-- **Transactions**: Income and expense records
-- **Budgets**: Spending limits by category
-- **SavingsGoals**: Financial targets
-- **Advice**: AI-generated recommendations
-
-#  Testing
-
-Run backend tests:
 ```bash
 cd backend
-pytest
+python -m venv .venv
 ```
 
-Run frontend tests (when implemented):
+Activate venv:
+
+Windows PowerShell:
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+macOS/Linux:
+
+```bash
+source .venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Create env file:
+
+```bash
+cp .env.example .env
+```
+
+Run API (port `8001`, matches frontend proxy):
+
+```bash
+uvicorn app.main:app --host 127.0.0.1 --port 8001 --reload
+```
+
+API docs: `http://127.0.0.1:8001/docs`
+
+### 2. Frontend
+
 ```bash
 cd frontend
-npm test
+npm install
+npm run dev
 ```
 
-# Documentation
+Frontend: `http://localhost:5173`
 
-- [Project Brief](docs/ai-personal-finance-brief.md) - Detailed project requirements (in Macedonian)
-- [API Documentation](http://localhost:8000/docs) - Auto-generated OpenAPI docs
-- [Database Schema](docs/) - Entity relationships and migrations
+By default, Vite proxies `/api` and `/uploads` to `http://127.0.0.1:8001`.
 
-#  Academic Context
+## Environment Configuration
 
-This project was developed as a diploma thesis exploring the intersection of personal finance management and artificial intelligence. It demonstrates practical application of modern web development practices, data analysis, and AI integration in a real-world problem domain.
+`backend/.env.example` contains the base keys. Important DB behavior:
 
-#  Future Enhancements
+- If `SQLALCHEMY_DATABASE_URI` is set to a value, that value is used.
+- If `SQLALCHEMY_DATABASE_URI` is empty, backend falls back to MySQL fields (`MYSQL_*`).
+- If no `.env` is present, code-level default is SQLite: `sqlite:///./finance_app.db`.
 
-- Bank account synchronization
-- Advanced analytics and reporting
-- Investment portfolio tracking
-- Mobile application
-- Advanced AI features (predictive analytics, automated savings)
+Example SQLite configuration:
+
+```env
+SQLALCHEMY_DATABASE_URI=sqlite:///./finance_app.db
+```
+
+Example MySQL configuration:
+
+```env
+SQLALCHEMY_DATABASE_URI=
+MYSQL_HOST=localhost
+MYSQL_PORT=3306
+MYSQL_USER=finance_app
+MYSQL_PASSWORD=change-me
+MYSQL_DB=finance_app
+```
+
+## API Overview
+
+Base prefix: `/api/v1`
+
+Registered route groups:
+
+- `/health`
+- Auth
+- Users
+- Transactions
+- Budgets
+- Savings Goals
+- Advice
+- Market
+
+Also available at app root: `/health`.
+
+## Frontend Pages
+
+Main routes include:
+
+- `/welcome`
+- `/auth/login`
+- `/auth/verify`
+- `/` dashboard (protected)
+- `/transactions`
+- `/budgets`
+- `/analytics`
+- `/portfolio`
+- `/crypto`
+- `/stocks`
+- `/assistant`
+- `/profile`
+- `/about`
+
+## Useful Commands
+
+Backend:
+
+```bash
+cd backend
+python inspect_db.py
+python run_migration.py
+python add_missing_columns.py
+```
+
+Frontend:
+
+```bash
+cd frontend
+npm run lint
+npm run build
+npm run preview
+```
+
+## Testing Status
+
+- Backend has minimal test scaffolding (`backend/test_app.py`).
+- `backend/tests/` is currently empty.
+- Frontend test script is not currently configured in `package.json`.
+
+## Documentation
+
+- Brief and requirements: `docs/ai-personal-finance-brief.md`
+- OpenAPI docs (while backend is running): `http://127.0.0.1:8001/docs`
+
+## Academic Context
+
+Developed as a diploma thesis project focused on applying modern web technologies and AI-assisted guidance to personal finance management.

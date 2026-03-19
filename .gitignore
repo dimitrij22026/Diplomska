@@ -44,3 +44,5 @@ test.json
 *.db
 *.db-shm
 *.db-wal
+
+frontend/temp_query.py
