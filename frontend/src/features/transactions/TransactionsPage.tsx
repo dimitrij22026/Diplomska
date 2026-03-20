@@ -36,6 +36,7 @@ export const TransactionsPage = () => {
   const { language, t } = useLanguage()
   const { user } = useAuth()
   const userCurrency = user?.currency || "EUR"
+  const isEmailVerified = Boolean(user?.is_email_verified)
 
   // Transactions period state
   const [transactionsPeriod, setTransactionsPeriod] =
@@ -212,6 +213,10 @@ export const TransactionsPage = () => {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    if (!isEmailVerified) {
+      setError("Verify email to enable.")
+      return
+    }
     setError(null)
     try {
       await createMutation.mutateAsync({
@@ -286,9 +291,11 @@ export const TransactionsPage = () => {
           onChange={(e) => setFormState((prev) => ({ ...prev, note: e.target.value }))}
         />
         {error && <p className="auth-error">{error}</p>}
-        <button className="primary-button" disabled={createMutation.isPending}>
-          {createMutation.isPending ? t("saving") : t("saveTransaction")}
-        </button>
+        <div title={!isEmailVerified ? "Verify email to enable." : undefined}>
+          <button className="primary-button" disabled={createMutation.isPending || !isEmailVerified}>
+            {createMutation.isPending ? t("saving") : t("saveTransaction")}
+          </button>
+        </div>
       </form>
       <div className="dashboard__split">
         <div className="panel">

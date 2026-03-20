@@ -1,6 +1,7 @@
 import { useMonthlyInsight } from "./hooks"
 import { useLanguage } from "../../i18n"
 import { useAuth } from "../../hooks/useAuth"
+import { UserStatusBanner } from "../../components/auth/UserStatusBanner"
 
 interface MonthlyData {
   balance: number | string
@@ -64,6 +65,12 @@ export const DashboardPage = () => {
   const { status, color } = getFinancialHealth(data as MonthlyData)
   const topCategory = data.top_expense_categories[0]?.category ?? t("spending")
 
+  const totalIncome = Number(data.total_income)
+  const totalExpense = Number(data.total_expense)
+  const totalBalance = Number(data.balance)
+  const hasActivity =
+    data.top_expense_categories.length > 0 || totalIncome > 0 || totalExpense > 0 || totalBalance !== 0
+
   const prevIncome = data.prev_total_income ?? "0"
   const prevExpense = data.prev_total_expense ?? "0"
   const carryover = data.carryover ?? "0"
@@ -91,14 +98,20 @@ export const DashboardPage = () => {
   const expenseChange = calcPercentChange(data.total_expense, prevExpense)
   const balanceChange = calcPercentChange(data.balance, carryover)
 
-  const displayMessage = t(`financialStatus_${status}`, { category: topCategory })
+  const displayMessage = hasActivity
+    ? t(`financialStatus_${status}`, { category: topCategory })
+    : t("financialStatus_newUser")
+
+  const heroColorClass = hasActivity ? `health-${color}` : "health-blue"
 
   return (
     <section className="dashboard-page">
+      <UserStatusBanner isEmailVerified={Boolean(user?.is_email_verified)} profilePath="/profile" />
+
       <div className="dashboard__header">
         <div>
           <p className="eyebrow">{t("financialImpact")}</p>
-          <h1 className={`hero-title health-${color}`}>{displayMessage}</h1>
+          <h1 className={`hero-title ${heroColorClass}`}>{displayMessage}</h1>
         </div>
 
         <div className="dashboard__badge">

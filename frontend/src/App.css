@@ -619,6 +619,50 @@
   gap: 0.85rem;
 }
 
+.user-status-banner {
+  position: sticky;
+  top: 1rem;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  margin-bottom: 2.1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.16), rgba(249, 115, 22, 0.1));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.user-status-banner__message {
+  margin: 0;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.user-status-banner__action {
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+:root[data-theme="light"] .user-status-banner {
+  border: 1px solid rgba(217, 119, 6, 0.3);
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(249, 115, 22, 0.12));
+}
+
+@media (max-width: 768px) {
+  .user-status-banner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .user-status-banner__action {
+    text-align: center;
+  }
+}
+
 .pf-type-row {
   display: grid;
   grid-template-columns: 120px 1fr 140px;
