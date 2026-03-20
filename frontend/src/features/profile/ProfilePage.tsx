@@ -321,6 +321,9 @@ export const ProfilePage = () => {
         </div>
       )}
 
+      {success && <p className="auth-success" style={{ marginBottom: "1rem" }}>{success}</p>}
+      {error && <p className="auth-error" style={{ marginBottom: "1rem" }}>{error}</p>}
+
       <div className="profile-grid">
         {/* User Info Card */}
         <div className="panel profile-card">
@@ -564,9 +567,6 @@ export const ProfilePage = () => {
           <p className="panel__subtitle">
             {t("updatePasswordDesc")}
           </p>
-
-          {success && <p className="auth-success">{success}</p>}
-          {error && <p className="auth-error">{error}</p>}
 
           {!isChangingPassword ? (
             <button
