@@ -1,8 +1,13 @@
-"""Add missing columns to the database."""
-import sqlite3
-import os
+"""Legacy SQLite helper. Prefer Alembic for schema migrations.
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "finance_app.db")
+Execute from backend directory:
+    python scripts/dev/add_missing_columns.py
+"""
+
+import os
+import sqlite3
+
+DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "finance_app.db")
 
 
 def add_column_if_not_exists(cursor, table, column, column_type, default=None):
@@ -16,9 +21,9 @@ def add_column_if_not_exists(cursor, table, column, column_type, default=None):
         print(f"Adding column: {column} to {table}")
         cursor.execute(sql)
         return True
-    else:
-        print(f"Column {column} already exists in {table}")
-        return False
+
+    print(f"Column {column} already exists in {table}")
+    return False
 
 
 def main():
@@ -26,36 +31,26 @@ def main():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
-    # Check current schema
     print("\n--- Current users table schema ---")
     cursor.execute("PRAGMA table_info(users)")
     for row in cursor.fetchall():
         print(f"  {row[1]}: {row[2]}")
 
     print("\n--- Adding missing columns ---")
-
-    # Add is_email_verified column
-    add_column_if_not_exists(
-        cursor, "users", "is_email_verified", "BOOLEAN", "0")
-
-    # Add profile_picture column
-    add_column_if_not_exists(
-        cursor, "users", "profile_picture", "VARCHAR(500)", "NULL")
+    add_column_if_not_exists(cursor, "users", "is_email_verified", "BOOLEAN", "0")
+    add_column_if_not_exists(cursor, "users", "profile_picture", "VARCHAR(500)", "NULL")
 
     conn.commit()
 
-    # Verify changes
     print("\n--- Updated users table schema ---")
     cursor.execute("PRAGMA table_info(users)")
     for row in cursor.fetchall():
         print(f"  {row[1]}: {row[2]}")
 
-    # Show users
     print("\n--- Current users ---")
     cursor.execute("SELECT id, email, full_name, is_email_verified FROM users")
     for row in cursor.fetchall():
-        print(
-            f"  ID: {row[0]}, Email: {row[1]}, Name: {row[2]}, Verified: {row[3]}")
+        print(f"  ID: {row[0]}, Email: {row[1]}, Name: {row[2]}, Verified: {row[3]}")
 
     conn.close()
     print("\nDone!")

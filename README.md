@@ -96,6 +96,12 @@ By default, Vite proxies `/api` and `/uploads` to `http://127.0.0.1:8001`.
 - If `SQLALCHEMY_DATABASE_URI` is empty, backend falls back to MySQL fields (`MYSQL_*`).
 - If no `.env` is present, code-level default is SQLite: `sqlite:///./finance_app.db`.
 
+Important CORS behavior:
+
+- `CORS_ALLOW_CREDENTIALS=false` is the default and recommended mode for Bearer-token auth.
+- If you must use cookies, set `CORS_ALLOW_CREDENTIALS=true` and use explicit production origins in `BACKEND_CORS_ORIGINS`.
+- Wildcard origins are blocked when credentials are enabled, and localhost origins are rejected in production.
+
 Example SQLite configuration:
 
 ```env
@@ -150,13 +156,16 @@ Main routes include:
 
 ## Useful Commands
 
+Note: `scripts/dev/*` helpers are for local development only. Use Alembic migrations for schema changes in normal workflows.
+
 Backend:
 
 ```bash
 cd backend
-python inspect_db.py
-python run_migration.py
-python add_missing_columns.py
+alembic upgrade head
+python scripts/dev/inspect_db.py
+python scripts/dev/run_migration.py
+python scripts/dev/add_missing_columns.py
 ```
 
 Frontend:
