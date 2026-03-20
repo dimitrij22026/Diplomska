@@ -151,6 +151,7 @@ def login(*, request: Request, db: Session = Depends(deps.get_db), credentials: 
         )
 
     user_service.reset_login_failures(db, auth_user)
+    user_service.register_successful_login(db, auth_user)
     _clear_ip_failures(client_ip)
 
     if auth_user.is_email_verified:

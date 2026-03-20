@@ -1,6 +1,7 @@
-import { BarChart3, Bot, CreditCard, PiggyBank, TrendingUp, User, Info, X, Moon, Sun } from "lucide-react"
+import { BarChart3, Bot, CreditCard, PiggyBank, TrendingUp, User, Info, X, Moon, Sun, Shield } from "lucide-react"
 import { NavLink, useNavigate } from "react-router-dom"
 
+import { useAuth } from "../../hooks/useAuth"
 import { useLanguage } from "../../i18n"
 import { LanguageSelector } from "../ui/LanguageSelector"
 
@@ -13,6 +14,7 @@ interface SidebarProps {
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const navigate = useNavigate()
+  const { user } = useAuth()
   const { t } = useLanguage()
 
   const navItems = [
@@ -26,6 +28,9 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     { to: "/assistant", label: t("aiAdvisor"), icon: <Bot size={18} /> },
     { to: "/profile", label: t("profile"), icon: <User size={18} /> },
     { to: "/about", label: t("aboutUs"), icon: <Info size={18} /> },
+    ...(user?.role === "ADMIN"
+      ? [{ to: "/admin", label: "Admin Panel", icon: <Shield size={18} /> }]
+      : []),
   ]
 
   return (

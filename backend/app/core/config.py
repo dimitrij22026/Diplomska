@@ -27,6 +27,8 @@ class Settings(BaseSettings):
     UNVERIFIED_ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
     AUTH_MAX_FAILED_ATTEMPTS: int = 5
     AUTH_LOCKOUT_MINUTES: int = 15
+    ADMIN_STEP_UP_TTL_MINUTES: int = 15
+    ADMIN_STEP_UP_PIN: str | None = None
 
     OPENAI_API_KEY: str | None = None
     GOOGLE_GEMINI_API_KEY: str | None = None

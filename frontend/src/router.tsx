@@ -1,7 +1,8 @@
 import { createBrowserRouter } from "react-router-dom"
 
-import { RequireAuth } from "./components/auth/RequireAuth"
+import { RequireAdmin, RequireAuth } from "./components/auth/RequireAuth"
 import { AppLayout } from "./components/layout/AppLayout"
+import { AdminShell } from "./pages/Admin/AdminShell"
 import { AdvicePage } from "./features/advice/AdvicePage"
 import { AnalyticsPage } from "./features/analytics/AnalyticsPage"
 import { BudgetsPage } from "./features/budgets/BudgetsPage"
@@ -48,5 +49,13 @@ export const router = createBrowserRouter([
       { path: "profile", element: <ProfilePage /> },
       { path: "about", element: <AboutPage /> },
     ],
+  },
+  {
+    path: "/admin",
+    element: (
+      <RequireAdmin>
+        <AdminShell />
+      </RequireAdmin>
+    ),
   },
 ])

@@ -1,4 +1,5 @@
 from app.schemas.advice import AdviceRead, AdviceRequest, ConversationSummary
+from app.schemas.admin import AdminStatsResponse, AdminStepUpRequest, AdminStepUpResponse, AdminTierBreakdown
 from app.schemas.auth import LoginRequest, Token, TokenPayload
 from app.schemas.budget import BudgetCreate, BudgetRead, BudgetUpdate
 from app.schemas.insight import CategoryBreakdown, MonthlyInsight
@@ -10,6 +11,10 @@ from app.schemas.user import AdminUserUpdate, PasswordChange, SubscriptionTier, 
 __all__ = [
     "AdviceRead",
     "AdviceRequest",
+    "AdminStatsResponse",
+    "AdminStepUpRequest",
+    "AdminStepUpResponse",
+    "AdminTierBreakdown",
     "AdminUserUpdate",
     "ConversationSummary",
     "BudgetCreate",

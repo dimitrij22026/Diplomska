@@ -1,6 +1,6 @@
 from collections.abc import Generator
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, Header, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError
 from sqlalchemy.orm import Session
@@ -74,4 +74,39 @@ def get_current_admin_user(current_user: User = Depends(get_current_user)) -> Us
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Admin access required",
         )
+    return current_user
+
+
+def get_current_step_up_admin_user(
+    current_user: User = Depends(get_current_admin_user),
+    step_up_token: str | None = Header(
+        default=None, alias="X-Admin-Step-Up-Token"),
+) -> User:
+    if not step_up_token:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Step-up authentication required",
+        )
+
+    try:
+        payload = decode_access_token(step_up_token)
+        token_data = TokenPayload(**payload)
+    except JWTError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid step-up token",
+        ) from exc
+
+    if token_data.token_kind != "admin_step_up":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid step-up token",
+        )
+
+    if token_data.sub is None or int(token_data.sub) != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Step-up token does not match current admin",
+        )
+
     return current_user

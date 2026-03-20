@@ -3,6 +3,10 @@ export type TransactionType = "income" | "expense"
 export interface UserProfile {
   id: number
   email: string
+  role: "USER" | "ADMIN"
+  subscription_tier: "FREE" | "PRO" | "PREMIUM"
+  is_banned: boolean
+  last_login_at?: string | null
   full_name?: string | null
   profile_picture?: string | null
   currency: string
@@ -85,4 +89,20 @@ export interface RegistrationPayload extends LoginCredentials {
   full_name?: string | null
   currency?: string
   monthly_income?: string
+}
+
+export interface AdminStepUpResponse {
+  step_up_token: string
+  expires_at: string
+}
+
+export interface AdminStatsResponse {
+  total_users: number
+  tiers: {
+    free: number
+    pro: number
+    premium: number
+  }
+  system_health: string
+  api_latency_ms: number
 }

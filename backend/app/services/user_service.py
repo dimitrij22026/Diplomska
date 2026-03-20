@@ -77,6 +77,14 @@ def reset_login_failures(db: Session, user: User) -> User:
     return user
 
 
+def register_successful_login(db: Session, user: User) -> User:
+    user.last_login_at = datetime.now(timezone.utc)
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return user
+
+
 def update(db: Session, user: User, user_in: UserUpdate) -> User:
     update_data = user_in.model_dump(exclude_unset=True)
     if "currency" in update_data and update_data["currency"]:

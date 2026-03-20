@@ -41,6 +41,8 @@ class PasswordChange(BaseModel):
 class UserRead(UserBase):
     id: int
     is_email_verified: bool
+    is_banned: bool
+    last_login_at: datetime | None = None
     role: UserRole
     subscription_tier: SubscriptionTier
     profile_picture: str | None = None

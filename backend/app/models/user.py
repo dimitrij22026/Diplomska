@@ -39,6 +39,10 @@ class User(Base):
     subscription_tier: Mapped[str] = mapped_column(
         String(16), default="FREE", nullable=False
     )
+    is_banned: Mapped[bool] = mapped_column(
+        Boolean, default=False, nullable=False)
+    last_login_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True)
     currency: Mapped[str] = mapped_column(
         String(3), default="EUR", nullable=False)
     monthly_income: Mapped[Decimal] = mapped_column(
