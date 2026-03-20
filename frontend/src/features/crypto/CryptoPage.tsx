@@ -10,8 +10,8 @@ import {
   YAxis,
 } from "recharts"
 import { Search, TrendingDown, TrendingUp, X } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
-import { useLanguage } from "../../i18n"
 import { useAuth } from "../../hooks/useAuth"
 import { apiClient } from "../../api/client"
 
@@ -76,6 +76,7 @@ function fmtMillions(n: number | null): string {
 
 // Chart Modal
 const CryptoChartModal = ({ coin, onClose }: { coin: CryptoRow; onClose: () => void }) => {
+  const { t } = useTranslation()
   const [chartRange, setChartRange] = useState<ChartRange>("1mo")
   const [chartData, setChartData] = useState<ChartPoint[]>([])
   const [chartLoading, setChartLoading] = useState(true)
@@ -133,7 +134,7 @@ const CryptoChartModal = ({ coin, onClose }: { coin: CryptoRow; onClose: () => v
           {chartLoading ? (
             <div className="page-centered" style={{ minHeight: 220 }}><div className="loader" /></div>
           ) : chartData.length === 0 ? (
-            <p style={{ textAlign: "center", color: "var(--muted)" }}>No chart data available.</p>
+            <p style={{ textAlign: "center", color: "var(--muted)" }}>{t("markets.noChartData")}</p>
           ) : (
             <ResponsiveContainer width="100%" height={260}>
               <AreaChart data={chartData} margin={{ top: 10, right: 8, bottom: 0, left: 0 }}>
@@ -148,7 +149,7 @@ const CryptoChartModal = ({ coin, onClose }: { coin: CryptoRow; onClose: () => v
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                 <Tooltip
                   labelFormatter={(l) => formatDate(l as number)}
-                  formatter={(v: number) => [fmtPrice(v), "Price"]}
+                  formatter={(v: number) => [fmtPrice(v), t("markets.price")]}
                   contentStyle={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12 }}
                 />
                 <Area type="monotone" dataKey="price" stroke={color} strokeWidth={2} dot={false} fill="url(#chartGrad)" />
@@ -157,8 +158,8 @@ const CryptoChartModal = ({ coin, onClose }: { coin: CryptoRow; onClose: () => v
           )}
         </div>
         <div className="coin-chart-modal__stats">
-          <div className="coin-stat"><span>Market Cap</span><strong>{fmtMillions(coin.market_cap)}</strong></div>
-          <div className="coin-stat"><span>Volume</span><strong>{fmtMillions(coin.volume)}</strong></div>
+          <div className="coin-stat"><span>{t("markets.marketCap")}</span><strong>{fmtMillions(coin.market_cap)}</strong></div>
+          <div className="coin-stat"><span>{t("markets.volume")}</span><strong>{fmtMillions(coin.volume)}</strong></div>
         </div>
       </div>
     </div>,
@@ -168,7 +169,7 @@ const CryptoChartModal = ({ coin, onClose }: { coin: CryptoRow; onClose: () => v
 
 // Main Page
 export const CryptoPage = () => {
-  const { language } = useLanguage()
+  const { t } = useTranslation()
   const { token } = useAuth()
 
   const [coins, setCoins] = useState<CryptoRow[]>([])
@@ -201,13 +202,13 @@ export const CryptoPage = () => {
         else        setCoins((prev) => [...prev, ...(res.quotes || [])])
       } catch (e) {
         if (e instanceof DOMException && e.name === "AbortError") return
-        setError(language === "mk" ? "Неуспешно вчитување на монети." : "Failed to load crypto prices.")
+        setError(t("markets.failedToLoadCrypto"))
       } finally {
         setLoading(false)
         setLoadingMore(false)
       }
     },
-    [language, token],
+    [t, token],
   )
 
   useEffect(() => {
@@ -302,26 +303,26 @@ export const CryptoPage = () => {
     <section className="market-page">
       <div className="dashboard__header">
         <div>
-          <p className="eyebrow">{language === "mk" ? "пазар" : "market"}</p>
-          <h1 className="hero-title">{language === "mk" ? "Крипто Пазар" : "Crypto Market"}</h1>
+          <p className="eyebrow">{t("markets.eyebrow")}</p>
+          <h1 className="hero-title">{t("markets.cryptoTitle")}</h1>
         </div>
         <div className="dashboard__badge">
-          <span>Yahoo Finance Data</span>
+          <span>{t("markets.dataSource")}</span>
         </div>
       </div>
 
       <div className="market-controls">
         <div className="market-search-wrap" style={{ position: "relative" }}>
           <Search size={15} className="market-search-icon" />
-          <input className="input market-search" placeholder={language === "mk" ? "Барај по симбол..." : "Search by symbol..."} value={query} onChange={(e) => setQuery(e.target.value)} />
+          <input className="input market-search" placeholder={t("markets.searchCryptoPlaceholder")} value={query} onChange={(e) => setQuery(e.target.value)} />
           {query && <button className="market-clear-btn" onClick={() => { setQuery(""); setSearchResults(null) }}><X size={13} /></button>}
 
           {searchResults !== null && query.trim() && (
             <div className="market-search-dropdown">
               {searchLoading ? (
-                <div style={{ padding: "0.75rem", textAlign: "center", color: "var(--muted)" }}>Searching&hellip;</div>
+                <div style={{ padding: "0.75rem", textAlign: "center", color: "var(--muted)" }}>{t("markets.searching")}</div>
               ) : searchResults.length === 0 ? (
-                <div style={{ padding: "0.75rem", textAlign: "center", color: "var(--muted)" }}>No results</div>
+                <div style={{ padding: "0.75rem", textAlign: "center", color: "var(--muted)" }}>{t("markets.noResults")}</div>
               ) : (
                 searchResults.map((result) => (
                   <button type="button" key={`${result.symbol}-${result.exchange}`} className="market-search-result" onClick={() => void handleSelectCoinSymbol(result.symbol)}>
@@ -339,38 +340,38 @@ export const CryptoPage = () => {
       <div className="market-row-filters">
         <div className="market-chips">
           <button className={`market-chip ${filter === "all" ? "market-chip--active" : ""}`} onClick={() => setFilter("all")}>
-            {language === "mk" ? "Сите" : "All"}
+            {t("markets.filters.all")}
           </button>
           <button className={`market-chip ${filter === "gainers" ? "market-chip--active" : ""}`} onClick={() => setFilter("gainers")}>
-            {language === "mk" ? "Добивки" : "Top Gainers"}
+            {t("markets.filters.gainers")}
           </button>
           <button className={`market-chip ${filter === "losers" ? "market-chip--active" : ""}`} onClick={() => setFilter("losers")}>
-            {language === "mk" ? "Загуби" : "Top Losers"}
+            {t("markets.filters.losers")}
           </button>
         </div>
       </div>
 
       <div className="panel market-table-panel">
         {loading && coins.length === 0 ? (
-          <div className="page-centered" style={{ minHeight: 300 }}><div className="loader" /><p>{language === "mk" ? "Се вчитуваат податоци..." : "Loading data…"}</p></div>
+          <div className="page-centered" style={{ minHeight: 300 }}><div className="loader" /><p>{t("markets.loadingData")}</p></div>
         ) : error ? (
           <div className="page-centered" style={{ minHeight: 200 }}>
             <p style={{ color: "var(--negative)" }}>{error}</p>
-            <button className="primary-button" onClick={() => fetchList(start, true)}>{language === "mk" ? "Обиди повторно" : "Retry"}</button>
+            <button className="primary-button" onClick={() => fetchList(start, true)}>{t("markets.retry")}</button>
           </div>
         ) : coins.length === 0 ? (
-          <p style={{ color: "var(--muted)", textAlign: "center", padding: "2rem 0" }}>{language === "mk" ? "Нема резултати." : "No results."}</p>
+          <p style={{ color: "var(--muted)", textAlign: "center", padding: "2rem 0" }}>{t("markets.noResultsWithDot")}</p>
         ) : (
           <>
             <div className="market-table-wrap">
               <table className="table market-table">
                 <thead>
                   <tr>
-                    <th>{language === "mk" ? "Монета" : "Coin"}</th>
-                    <th className="amount-header">{language === "mk" ? "Цена" : "Price"}</th>
-                    <th className="amount-header">{language === "mk" ? "Промена" : "Change"}</th>
-                    <th className="amount-header hide-sm">{language === "mk" ? "Пазарна кап." : "Market Cap"}</th>
-                    <th className="amount-header hide-sm">{language === "mk" ? "Волумен" : "Volume"}</th>
+                    <th>{t("markets.coin")}</th>
+                    <th className="amount-header">{t("markets.price")}</th>
+                    <th className="amount-header">{t("markets.change")}</th>
+                    <th className="amount-header hide-sm">{t("markets.marketCap")}</th>
+                    <th className="amount-header hide-sm">{t("markets.volume")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -403,7 +404,7 @@ export const CryptoPage = () => {
             {hasMore && !query.trim() && (
               <div className="market-load-more">
                 <button className="primary-button" onClick={handleLoadMore} disabled={loadingMore}>
-                  {loadingMore ? (language === "mk" ? "Се вчитува..." : "Loading…") : (language === "mk" ? "Вчитај повеќе" : `Load ${PAGE_SIZE} more`)}
+                  {loadingMore ? t("markets.loading") : t("markets.loadMore", { count: PAGE_SIZE })}
                 </button>
               </div>
             )}

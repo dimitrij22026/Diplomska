@@ -16,17 +16,18 @@ import {
   Area,
   AreaChart,
 } from "recharts"
+import { useTranslation } from "react-i18next"
 
 import { useTransactions } from "../transactions/hooks"
-import { useLanguage } from "../../i18n"
 import { useAuth } from "../../hooks/useAuth"
 
 const COLORS = ["#6366f1", "#22c55e", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4", "#ec4899", "#84cc16"]
 
 // Investment Calculator Component
 const InvestmentCalculator = () => {
-  const { language, t } = useLanguage()
+  const { t, i18n } = useTranslation()
   const { user } = useAuth()
+  const language = i18n.resolvedLanguage ?? i18n.language ?? "en"
   const userCurrency = user?.currency || "EUR"
 
   const investmentTypes = [
@@ -89,14 +90,14 @@ const InvestmentCalculator = () => {
     }
 
     return projections
-  }, [investment, language, t])
+  }, [investment, t])
 
   const finalBalance = calculateInvestment[calculateInvestment.length - 1]?.balance || 0
   const totalContributions = calculateInvestment[calculateInvestment.length - 1]?.contributions || 0
   const totalEarnings = finalBalance - totalContributions
 
   const formatCurrency = (value: number) =>
-    new Intl.NumberFormat(language === "mk" ? "mk-MK" : "en-US", {
+    new Intl.NumberFormat(language.startsWith("mk") ? "mk-MK" : "en-US", {
       style: "currency",
       currency: userCurrency,
       maximumFractionDigits: 0,
@@ -131,7 +132,7 @@ const InvestmentCalculator = () => {
       <div className="investment-info">
         <span className="investment-info__icon"></span>
         <p>
-          {t(`${selectedType}Info` as TranslationKey)}
+          {t(`${selectedType}Info`)}
         </p>
       </div>
 
@@ -207,7 +208,7 @@ const InvestmentCalculator = () => {
               stackId="1"
               stroke="#6366f1"
               fill="#6366f1"
-              name={language === "mk" ? "Уплати" : "Contributions"}
+              name={t("totalContributions")}
             />
             <Area
               type="monotone"
@@ -215,7 +216,7 @@ const InvestmentCalculator = () => {
               stackId="1"
               stroke="#22c55e"
               fill="#22c55e"
-              name={language === "mk" ? "Заработено" : "Earnings"}
+              name={t("earnings")}
             />
           </AreaChart>
         </ResponsiveContainer>
@@ -226,7 +227,7 @@ const InvestmentCalculator = () => {
 
 // Savings Goals Component
 const SavingsGoals = () => {
-  const { language } = useLanguage()
+  const { t } = useTranslation()
 
   // TODO: Replace with actual savings goals from API when implemented
   const goals: { id: number; name: string; target: number; current: number }[] = []
@@ -234,19 +235,17 @@ const SavingsGoals = () => {
   return (
     <div className="panel savings-goals">
       <h3 className="panel__title">
-        {language === "mk" ? "🎯 Цели за штедење" : "🎯 Savings Goals"}
+        🎯 {t("savingsGoals")}
       </h3>
       <p className="panel__subtitle">
-        {language === "mk" ? "Следи го напредокот кон твоите цели" : "Track progress towards your goals"}
+        {t("trackProgress")}
       </p>
 
       {goals.length === 0 ? (
         <div className="empty-state">
           <span className="empty-state__icon"></span>
           <p className="empty-state__text">
-            {language === "mk" 
-              ? "Оваа функција ќе биде достапна наскоро!"
-              : "No savings goals defined. This feature will be available soon!"}
+            {t("savingsGoalsComingSoon")}
           </p>
         </div>
       ) : (
@@ -282,14 +281,15 @@ const SavingsGoals = () => {
 
 export const AnalyticsPage = () => {
   const { data: transactions, isLoading } = useTransactions()
-  const { language, t } = useLanguage()
+  const { t, i18n } = useTranslation()
+  const language = i18n.resolvedLanguage ?? i18n.language ?? "en"
   const { user } = useAuth()
   const userCurrency = user?.currency || "EUR"
   const [savingsPeriod, setSavingsPeriod] = useState<"day" | "month" | "year" | "all">("day")
   const [categoryPeriod, setCategoryPeriod] = useState<"day" | "month" | "year" | "all">("month")
 
   const formatCurrency = (value: number) =>
-    new Intl.NumberFormat(language === "mk" ? "mk-MK" : "en-US", {
+    new Intl.NumberFormat(language.startsWith("mk") ? "mk-MK" : "en-US", {
       style: "currency",
       currency: userCurrency,
     }).format(value)
@@ -358,11 +358,10 @@ export const AnalyticsPage = () => {
       .slice(-6)
       .map(([month, data]) => {
         const [, m] = month.split("-")
-        const monthNames = language === "mk"
-          ? ["Јан", "Феб", "Мар", "Апр", "Мај", "Јун", "Јул", "Авг", "Сеп", "Окт", "Ное", "Дек"]
-          : ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
         return {
-          month: monthNames[parseInt(m) - 1],
+          month: new Intl.DateTimeFormat(language, { month: "short" }).format(
+            new Date(2026, parseInt(m, 10) - 1, 1)
+          ),
           income: data.income,
           expense: data.expense,
           savings: data.income - data.expense,
@@ -444,7 +443,7 @@ export const AnalyticsPage = () => {
       return Object.entries(dailyTotals)
         .sort((a, b) => a[0].localeCompare(b[0]))
         .map(([date, data]) => ({
-          label: new Date(date).toLocaleDateString(language === "mk" ? "mk-MK" : "en-US", { day: "numeric" }),
+          label: new Date(date).toLocaleDateString(language, { day: "numeric" }),
           savings: data.income - data.expense,
         }))
     } else if (savingsPeriod === "year") {
@@ -498,7 +497,7 @@ export const AnalyticsPage = () => {
     return (
       <div className="page-centered">
         <div className="loader" />
-        <p>{language === "mk" ? "Се вчитуваат аналитики..." : "Loading analytics..."}</p>
+        <p>{t("loadingAnalytics")}</p>
       </div>
     )
   }
@@ -507,13 +506,13 @@ export const AnalyticsPage = () => {
     <section className="analytics-page">
       <div className="dashboard__header">
         <div>
-          <p className="eyebrow">{language === "mk" ? "финансиска аналитика" : "financial analytics"}</p>
+          <p className="eyebrow">{t("financialAnalytics")}</p>
           <h1 className="hero-title">
-            {language === "mk" ? "Визуелизации и планирање" : "Visualizations & Planning"}
+            {t("visualizationsPlanning")}
           </h1>
         </div>
         <div className="dashboard__badge">
-          {language === "mk" ? "Вкупни заштеди" : "Total Savings"}
+          {t("totalSavings")}
           <strong className={totals.savings >= 0 ? "text-success" : "text-danger"}>
             {formatCurrency(totals.savings)}
           </strong>
@@ -524,28 +523,28 @@ export const AnalyticsPage = () => {
       <div className="card-grid">
         <article className="stat-card">
           <p className="stat-card__label">
-            {language === "mk" ? "Приходи овој месец" : "Income This Month"}
+            {t("incomeThisMonth")}
           </p>
           <p className="stat-card__value">{formatCurrency(monthlyComparison.currentIncome || 0)}</p>
           {monthlyComparison.hasData && (
             <p className={`stat-card__change ${monthlyComparison.incomeChange >= 0 ? "text-success" : "text-danger"}`}>
-              {monthlyComparison.incomeChange >= 0 ? "+" : ""}{monthlyComparison.incomeChange.toFixed(1)}% {language === "mk" ? "од претходен" : "vs last month"}
+              {monthlyComparison.incomeChange >= 0 ? "+" : ""}{monthlyComparison.incomeChange.toFixed(1)}% {t("vsPreviousMonth")}
             </p>
           )}
         </article>
         <article className="stat-card stat-card--expense">
           <p className="stat-card__label">
-            {language === "mk" ? "Трошоци овој месец" : "Expenses This Month"}
+            {t("expensesThisMonth")}
           </p>
           <p className="stat-card__value">{formatCurrency(monthlyComparison.currentExpense || 0)}</p>
           {monthlyComparison.hasData && (
             <p className={`stat-card__change ${monthlyComparison.expenseChange <= 0 ? "text-success" : "text-danger"}`}>
-              {monthlyComparison.expenseChange >= 0 ? "+" : ""}{monthlyComparison.expenseChange.toFixed(1)}% {language === "mk" ? "од претходен" : "vs last month"}
+              {monthlyComparison.expenseChange >= 0 ? "+" : ""}{monthlyComparison.expenseChange.toFixed(1)}% {t("vsPreviousMonth")}
             </p>
           )}
         </article>
         <article className="stat-card">
-          <p className="stat-card__label">{language === "mk" ? "Стапка на штедење" : "Savings Rate"}</p>
+          <p className="stat-card__label">{t("savingsRate")}</p>
           <p className="stat-card__value">
             {totals.income > 0 ? `${((totals.savings / totals.income) * 100).toFixed(1)}%` : "0%"}
           </p>
@@ -559,10 +558,10 @@ export const AnalyticsPage = () => {
           <div className="panel__header">
             <div>
               <h3 className="panel__title">
-                {language === "mk" ? "🥧 Трошоци по категорија" : "🥧 Spending by Category"}
+                🥧 {t("spendingByCategory")}
               </h3>
               <p className="panel__subtitle">
-                {language === "mk" ? "Дистрибуција на твоите трошоци" : "Distribution of your expenses"}
+                {t("expenseDistribution")}
               </p>
             </div>
             <div className="period-selector">
@@ -570,25 +569,25 @@ export const AnalyticsPage = () => {
                 className={`period-btn ${categoryPeriod === "day" ? "period-btn--active" : ""}`}
                 onClick={() => setCategoryPeriod("day")}
               >
-                {language === "mk" ? "Ден" : "Day"}
+                {t("periodDay")}
               </button>
               <button
                 className={`period-btn ${categoryPeriod === "month" ? "period-btn--active" : ""}`}
                 onClick={() => setCategoryPeriod("month")}
               >
-                {language === "mk" ? "Месец" : "Month"}
+                {t("periodMonth")}
               </button>
               <button
                 className={`period-btn ${categoryPeriod === "year" ? "period-btn--active" : ""}`}
                 onClick={() => setCategoryPeriod("year")}
               >
-                {language === "mk" ? "Година" : "Year"}
+                {t("periodYear")}
               </button>
               <button
                 className={`period-btn ${categoryPeriod === "all" ? "period-btn--active" : ""}`}
                 onClick={() => setCategoryPeriod("all")}
               >
-                {language === "mk" ? "Сите" : "All"}
+                {t("periodAll")}
               </button>
             </div>
           </div>
@@ -618,17 +617,17 @@ export const AnalyticsPage = () => {
               </ResponsiveContainer>
             </div>
           ) : (
-            <p className="no-data">{language === "mk" ? "Нема податоци за приказ" : "No data to display"}</p>
+            <p className="no-data">{t("noDataToDisplay")}</p>
           )}
         </div>
 
         {/* Monthly Income vs Expenses Bar Chart */}
         <div className="panel">
           <h3 className="panel__title">
-            {language === "mk" ? "📊 Месечен преглед" : "📊 Monthly Overview"}
+            📊 {t("monthlyOverview")}
           </h3>
           <p className="panel__subtitle">
-            {language === "mk" ? "Приходи vs Трошоци по месец" : "Income vs Expenses by month"}
+            {t("incomeVsExpenses")}
           </p>
           {monthlyData.length > 0 ? (
             <div className="chart-container">
@@ -646,20 +645,20 @@ export const AnalyticsPage = () => {
                   <Bar
                     dataKey="income"
                     fill="#22c55e"
-                    name={language === "mk" ? "Приходи" : "Income"}
+                    name={t("income")}
                     radius={[4, 4, 0, 0]}
                   />
                   <Bar
                     dataKey="expense"
                     fill="#ef4444"
-                    name={language === "mk" ? "Трошоци" : "Expenses"}
+                    name={t("expenses")}
                     radius={[4, 4, 0, 0]}
                   />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           ) : (
-            <p className="no-data">{language === "mk" ? "Нема податоци за приказ" : "No data to display"}</p>
+            <p className="no-data">{t("noDataToDisplay")}</p>
           )}
         </div>
       </div>
@@ -680,19 +679,19 @@ export const AnalyticsPage = () => {
               className={`period-btn ${savingsPeriod === "day" ? "period-btn--active" : ""}`}
               onClick={() => setSavingsPeriod("day")}
             >
-              {language === "mk" ? "Ден" : "Day"}
+              {t("periodDay")}
             </button>
             <button
               className={`period-btn ${savingsPeriod === "month" ? "period-btn--active" : ""}`}
               onClick={() => setSavingsPeriod("month")}
             >
-              {language === "mk" ? "Месец" : "Month"}
+              {t("periodMonth")}
             </button>
             <button
               className={`period-btn ${savingsPeriod === "year" ? "period-btn--active" : ""}`}
               onClick={() => setSavingsPeriod("year")}
             >
-              {language === "mk" ? "Година" : "Year"}
+              {t("periodYear")}
             </button>
           </div>
         </div>
@@ -720,7 +719,7 @@ export const AnalyticsPage = () => {
             </ResponsiveContainer>
           </div>
         ) : (
-          <p className="no-data">{language === "mk" ? "Нема податоци за приказ" : "No data to display"}</p>
+          <p className="no-data">{t("noDataToDisplay")}</p>
         )}
       </div>
 

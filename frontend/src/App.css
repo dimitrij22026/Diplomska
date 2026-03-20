@@ -171,9 +171,102 @@
 .sidebar__language {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
   padding: 0.5rem 1rem;
+}
+
+.language-selector {
+  position: relative;
+  width: auto;
+  min-width: 160px;
+}
+
+.language-selector__trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.85rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.language-selector__trigger:hover {
+  border-color: rgba(255, 182, 119, 0.45);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.language-selector__label {
+  font-weight: 500;
+}
+
+.language-selector__flag {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.language-selector__chevron {
   color: var(--muted);
+  transition: transform 0.2s ease;
+  margin-left: 0.5rem;
+}
+
+.language-selector__chevron--open {
+  transform: rotate(180deg);
+}
+
+.language-selector__menu {
+  position: absolute;
+  left: 0;
+  right: 0; /* Keeps it same width as trigger */
+  bottom: calc(100% + 0.4rem);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.35rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(9, 11, 28, 0.96);
+  box-shadow: 0 14px 35px rgba(3, 5, 13, 0.45);
+  /* Ensure menu is not narrower than content */
+  min-width: 100%;
+  width: max-content; 
+}
+
+.language-selector__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  border-radius: 10px;
+  padding: 0.5rem 0.6rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s ease;
+}
+
+.language-selector__item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.language-selector__item--active {
+  background: rgba(255, 182, 119, 0.15);
+  color: var(--accent);
+}
+
+.language-selector__item-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
 }
 
 .sidebar__theme {
@@ -224,38 +317,25 @@
   opacity: 1;
 }
 
-.lang-btn {
-  background: none;
-  border: none;
-  color: var(--muted);
-  font-size: 0.85rem;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
-  transition: all 0.2s ease;
+:root[data-theme="light"] .language-selector__trigger {
+  background: rgba(255, 255, 255, 0.9);
 }
 
-.lang-btn:hover {
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.08);
+:root[data-theme="light"] .language-selector__trigger:hover {
+  background: rgba(255, 255, 255, 0.98);
 }
 
-.lang-btn--active {
-  color: var(--accent);
-  background: rgba(255, 182, 119, 0.15);
+:root[data-theme="light"] .language-selector__menu {
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 14px 35px rgba(15, 23, 42, 0.16);
 }
 
-:root[data-theme="light"] .lang-btn:hover {
-  background: rgba(15, 23, 42, 0.05);
+:root[data-theme="light"] .language-selector__item:hover {
+  background: rgba(15, 23, 42, 0.06);
 }
 
-:root[data-theme="light"] .lang-btn--active {
-  background: rgba(234, 88, 12, 0.1);
-}
-
-.lang-separator {
-  color: var(--border);
+:root[data-theme="light"] .language-selector__item--active {
+  background: rgba(234, 88, 12, 0.12);
 }
 
 .app-main {

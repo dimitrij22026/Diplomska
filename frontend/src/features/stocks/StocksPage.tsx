@@ -10,8 +10,8 @@ import {
   YAxis,
 } from "recharts"
 import { Search, TrendingDown, TrendingUp, X } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
-import { useLanguage } from "../../i18n"
 import { useAuth } from "../../hooks/useAuth"
 import { apiClient } from "../../api/client"
 
@@ -50,13 +50,7 @@ type Screener = "all" | "day_gainers" | "day_losers" | "most_actives" | "growth_
 type ChartRange = "1d" | "5d" | "1mo" | "3mo" | "6mo" | "1y" | "5y"
 
 // Constants
-const SCREENERS: { id: Screener; en: string; mk: string }[] = [
-  { id: "all",                       en: "Most Active",  mk: "\u041d\u0430\u0458\u0430\u043a\u0442\u0438\u0432\u043d\u0438" },
-  { id: "day_gainers",               en: "Day Gainers",  mk: "\u0414\u043d\u0435\u0432\u043d\u0438 \u0434\u043e\u0431\u0438\u0432\u043a\u0438" },
-  { id: "day_losers",                en: "Day Losers",   mk: "\u0414\u043d\u0435\u0432\u043d\u0438 \u0433\u0443\u0431\u0438\u0442\u043d\u0438\u0446\u0438" },
-  { id: "most_actives",              en: "Top Volume",   mk: "\u0422\u043e\u043f \u0432\u043e\u043b\u0443\u043c\u0435\u043d" },
-  { id: "growth_technology_stocks",  en: "Tech Growth",  mk: "\u0422\u0435\u0445 \u0440\u0430\u0441\u0442" },
-]
+const SCREENERS: Screener[] = ["all", "day_gainers", "day_losers", "most_actives", "growth_technology_stocks"]
 
 const CHART_RANGES: { value: ChartRange; label: string }[] = [
   { value: "1d",  label: "1D" },
@@ -99,6 +93,7 @@ function fmtVol(n: number | null): string {
 
 // Stock Chart Modal
 const StockChartModal = ({ stock, onClose }: { stock: StockRow; onClose: () => void }) => {
+  const { t } = useTranslation()
   const [displayStock, setDisplayStock] = useState<StockRow>(stock)
   const [chartRange, setChartRange] = useState<ChartRange>("1mo")
   const [chartData, setChartData] = useState<ChartPoint[]>([])
@@ -193,7 +188,7 @@ const StockChartModal = ({ stock, onClose }: { stock: StockRow; onClose: () => v
           {chartLoading ? (
             <div className="page-centered" style={{ minHeight: 220 }}><div className="loader" /></div>
           ) : chartData.length === 0 ? (
-            <p style={{ textAlign: "center", color: "var(--muted)" }}>No chart data available.</p>
+            <p style={{ textAlign: "center", color: "var(--muted)" }}>{t("markets.noChartData")}</p>
           ) : (
             <ResponsiveContainer width="100%" height={260}>
               <AreaChart data={chartData} margin={{ top: 10, right: 8, bottom: 0, left: 0 }}>
@@ -208,7 +203,7 @@ const StockChartModal = ({ stock, onClose }: { stock: StockRow; onClose: () => v
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                 <Tooltip
                   labelFormatter={(l) => formatDate(l as number)}
-                  formatter={(v: number) => [fmtPrice(v), "Price"]}
+                  formatter={(v: number) => [fmtPrice(v), t("markets.price")]}
                   contentStyle={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12 }}
                 />
                 <Area type="monotone" dataKey="price" stroke={color} strokeWidth={2} dot={false} fill="url(#sChartGrad)" />
@@ -218,10 +213,10 @@ const StockChartModal = ({ stock, onClose }: { stock: StockRow; onClose: () => v
         </div>
 
         <div className="coin-chart-modal__stats">
-          <div className="coin-stat"><span>Market Cap</span><strong>{fmtLarge(displayStock.market_cap)}</strong></div>
-          <div className="coin-stat"><span>Volume</span><strong>{fmtVol(displayStock.volume)}</strong></div>
-          <div className="coin-stat"><span>Day Range</span><strong>{fmtPrice(displayStock.day_low)} - {fmtPrice(displayStock.day_high)}</strong></div>
-          <div className="coin-stat"><span>52w Low</span><strong>{fmtPrice(displayStock.fifty_two_week_low)}</strong></div>
+          <div className="coin-stat"><span>{t("markets.marketCap")}</span><strong>{fmtLarge(displayStock.market_cap)}</strong></div>
+          <div className="coin-stat"><span>{t("markets.volume")}</span><strong>{fmtVol(displayStock.volume)}</strong></div>
+          <div className="coin-stat"><span>{t("markets.dayRange")}</span><strong>{fmtPrice(displayStock.day_low)} - {fmtPrice(displayStock.day_high)}</strong></div>
+          <div className="coin-stat"><span>{t("markets.fiftyTwoWeekLow")}</span><strong>{fmtPrice(displayStock.fifty_two_week_low)}</strong></div>
         </div>
       </div>
     </div>,
@@ -231,7 +226,7 @@ const StockChartModal = ({ stock, onClose }: { stock: StockRow; onClose: () => v
 
 // Main Page
 export const StocksPage = () => {
-  const { language } = useLanguage()
+  const { t } = useTranslation()
   const { token } = useAuth()
 
   const [stocks, setStocks] = useState<StockRow[]>([])
@@ -264,18 +259,18 @@ export const StocksPage = () => {
         if (reset) setStocks(data.quotes)
         else        setStocks((prev) => [...prev, ...data.quotes])
       } catch (e) {
-        let errMsg = "Failed to load stocks."
+        let errMsg = t("markets.failedToLoadStocks")
         if (e instanceof Error) {
           try {
             const parsed = JSON.parse(e.message)
             if (parsed?.status?.error_code === 429 || parsed?.error?.code === 429) {
-              errMsg = language === "mk" ? "Надминат лимит. Обидете се повторно подоцна." : "Rate limit exceeded. Please try again later."
+              errMsg = t("markets.rateLimitExceeded")
             } else {
               errMsg = e.message
             }
           } catch {
             if (e.message.includes("429")) {
-               errMsg = language === "mk" ? "Надминат лимит. Обидете се повторно подоцна." : "Rate limit exceeded. Please try again later."
+               errMsg = t("markets.rateLimitExceeded")
             } else {
                errMsg = e.message
             }
@@ -287,7 +282,7 @@ export const StocksPage = () => {
         setLoadingMore(false)
       }
     },
-    [screener, token],
+    [screener, t, token],
   )
 
   useEffect(() => {
@@ -372,27 +367,27 @@ export const StocksPage = () => {
     <section className="market-page">
       <div className="dashboard__header">
         <div>
-          <p className="eyebrow">{language === "mk" ? "\u043f\u0430\u0437\u0430\u0440" : "market"}</p>
-          <h1 className="hero-title">{language === "mk" ? "\u0410\u043a\u0446\u0438\u0438" : "Stocks"}</h1>
+          <p className="eyebrow">{t("markets.eyebrow")}</p>
+          <h1 className="hero-title">{t("markets.stocksTitle")}</h1>
         </div>
         <div className="dashboard__badge">
-          <span>Yahoo Finance Data</span>
+          <span>{t("markets.dataSource")}</span>
         </div>
       </div>
 
       <div className="market-controls">
         <div className="market-search-wrap" style={{ position: "relative" }}>
           <Search size={15} className="market-search-icon" />
-          <input className="input market-search" placeholder={language === "mk" ? "\u0411\u0430\u0440\u0430\u0458 \u0430\u043a\u0446\u0438\u0458\u0430..." : "Search stock / ticker..."} value={query} onChange={(e) => setQuery(e.target.value)} />
+          <input className="input market-search" placeholder={t("markets.searchStockPlaceholder")} value={query} onChange={(e) => setQuery(e.target.value)} />
           {query && <button className="market-clear-btn" onClick={() => { setQuery(""); setSearchResults(null) }}><X size={13} /></button>}
 
           {/* Search dropdown */}
           {searchResults !== null && query.trim() && (
             <div className="market-search-dropdown">
               {searchLoading ? (
-                <div style={{ padding: "0.75rem", textAlign: "center", color: "var(--muted)" }}>Searching&hellip;</div>
+                <div style={{ padding: "0.75rem", textAlign: "center", color: "var(--muted)" }}>{t("markets.searching")}</div>
               ) : searchResults.length === 0 ? (
-                <div style={{ padding: "0.75rem", textAlign: "center", color: "var(--muted)" }}>No results</div>
+                <div style={{ padding: "0.75rem", textAlign: "center", color: "var(--muted)" }}>{t("markets.noResults")}</div>
               ) : (
                 searchResults.map((r) => (
                   <button
@@ -417,8 +412,8 @@ export const StocksPage = () => {
       <div className="market-row-filters">
         <div className="market-chips">
           {SCREENERS.map((s) => (
-            <button key={s.id} className={`market-chip ${screener === s.id ? "market-chip--active" : ""}`} onClick={() => setScreener(s.id)}>
-              {language === "mk" ? s.mk : s.en}
+            <button key={s} className={`market-chip ${screener === s ? "market-chip--active" : ""}`} onClick={() => setScreener(s)}>
+              {t(`markets.screeners.${s}`)}
             </button>
           ))}
         </div>
@@ -426,27 +421,27 @@ export const StocksPage = () => {
 
       <div className="panel market-table-panel">
         {loading ? (
-          <div className="page-centered" style={{ minHeight: 300 }}><div className="loader" /><p>{language === "mk" ? "\u0421\u0435 \u0432\u0447\u0438\u0442\u0443\u0432\u0430\u0430\u0442 \u0430\u043a\u0446\u0438\u0438..." : "Loading stocks\u2026"}</p></div>
+          <div className="page-centered" style={{ minHeight: 300 }}><div className="loader" /><p>{t("markets.loadingStocks")}</p></div>
         ) : error ? (
           <div className="page-centered" style={{ minHeight: 200 }}>
             <p style={{ color: "var(--negative)" }}>{error}</p>
-            <button className="primary-button" onClick={() => fetchStocks(0, true)}>{language === "mk" ? "\u041e\u0431\u0438\u0434\u0438 \u043f\u043e\u0432\u0442\u043e\u0440\u043d\u043e" : "Retry"}</button>
+            <button className="primary-button" onClick={() => fetchStocks(0, true)}>{t("markets.retry")}</button>
           </div>
         ) : stocks.length === 0 ? (
-          <p style={{ color: "var(--muted)", textAlign: "center", padding: "2rem 0" }}>{language === "mk" ? "\u041d\u0435\u043c\u0430 \u0440\u0435\u0437\u0443\u043b\u0442\u0430\u0442\u0438." : "No results."}</p>
+          <p style={{ color: "var(--muted)", textAlign: "center", padding: "2rem 0" }}>{t("markets.noResultsWithDot")}</p>
         ) : (
           <>
             <div className="market-table-wrap">
               <table className="table market-table">
                 <thead>
                   <tr>
-                    <th>{language === "mk" ? "\u0421\u0438\u043c\u0431\u043e\u043b" : "Symbol"}</th>
-                    <th>{language === "mk" ? "\u0418\u043c\u0435" : "Name"}</th>
-                    <th className="amount-header">{language === "mk" ? "\u0426\u0435\u043d\u0430" : "Price"}</th>
-                    <th className="amount-header">{language === "mk" ? "\u041f\u0440\u043e\u043c\u0435\u043d\u0430" : "Change"}</th>
-                    <th className="amount-header hide-sm">{language === "mk" ? "\u041f\u0430\u0437\u0430\u0440\u043d\u0430 \u043a\u0430\u043f." : "Market Cap"}</th>
-                    <th className="amount-header hide-sm">{language === "mk" ? "\u0412\u043e\u043b\u0443\u043c\u0435\u043d" : "Volume"}</th>
-                    <th className="amount-header hide-md">{language === "mk" ? "\u0414\u043d\u0435\u0432\u0435\u043d \u0440\u0430\u0441\u043f\u043e\u043d" : "Day Range"}</th>
+                    <th>{t("markets.symbol")}</th>
+                    <th>{t("markets.name")}</th>
+                    <th className="amount-header">{t("markets.price")}</th>
+                    <th className="amount-header">{t("markets.change")}</th>
+                    <th className="amount-header hide-sm">{t("markets.marketCap")}</th>
+                    <th className="amount-header hide-sm">{t("markets.volume")}</th>
+                    <th className="amount-header hide-md">{t("markets.dayRange")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -475,9 +470,9 @@ export const StocksPage = () => {
             {hasMore && (
               <div className="market-load-more">
                 <button className="primary-button" onClick={handleLoadMore} disabled={loadingMore}>
-                  {loadingMore ? (language === "mk" ? "\u0421\u0435 \u0432\u0447\u0438\u0442\u0443\u0432\u0430..." : "Loading\u2026") : (language === "mk" ? "\u0412\u0447\u0438\u0442\u0430\u0458 \u043f\u043e\u0432\u0435\u045c\u0435" : `Load ${PAGE_SIZE} more`)}
+                  {loadingMore ? t("markets.loading") : t("markets.loadMore", { count: PAGE_SIZE })}
                 </button>
-                <span className="market-count">{language === "mk" ? `\u041f\u0440\u0438\u043a\u0430\u0436\u0430\u043d\u043e: ${stocks.length} / ${total}` : `Showing ${stocks.length} / ${total}`}</span>
+                <span className="market-count">{t("markets.showingCount", { current: stocks.length, total })}</span>
               </div>
             )}
           </>

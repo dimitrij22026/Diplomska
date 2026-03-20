@@ -3,21 +3,25 @@ import {
   useEffect,
   type ReactNode,
 } from "react"
+import i18next from "i18next"
 import { translations, type Language } from "./translations"
 import { LanguageContext } from "./language-context"
 
 const STORAGE_KEY = "finson.language"
+const I18N_STORAGE_KEY = "finson.i18nextLng"
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>(() => {
     const saved = localStorage.getItem(STORAGE_KEY)
-    if (saved === "mk" || saved === "en") return saved
+    if (saved && saved in translations) return saved as Language
     return "mk" // Default to Macedonian
   })
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang)
     localStorage.setItem(STORAGE_KEY, lang)
+    localStorage.setItem(I18N_STORAGE_KEY, lang)
+    void i18next.changeLanguage(lang)
   }
 
   // Translation function with interpolation support
@@ -33,6 +37,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     document.documentElement.lang = language
+    // Keep react-i18next consumers (e.g. market and analytics pages) in sync
+    // with the app-level language context used by the sidebar selector.
+    if (i18next.language !== language) {
+      void i18next.changeLanguage(language)
+    }
   }, [language])
 
   return (

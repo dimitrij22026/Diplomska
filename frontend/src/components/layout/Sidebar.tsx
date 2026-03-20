@@ -1,7 +1,8 @@
-import { BarChart3, Bot, CreditCard, Globe, PiggyBank, TrendingUp, User, Info, X, ChevronLeft, ChevronRight, Moon, Sun } from "lucide-react"
+import { BarChart3, Bot, CreditCard, PiggyBank, TrendingUp, User, Info, X, Moon, Sun } from "lucide-react"
 import { NavLink, useNavigate } from "react-router-dom"
 
 import { useLanguage } from "../../i18n"
+import { LanguageSelector } from "../ui/LanguageSelector"
 
 interface SidebarProps {
   isOpen?: boolean
@@ -10,9 +11,9 @@ interface SidebarProps {
   onToggleCollapse?: () => void
 }
 
-export const Sidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse }: SidebarProps) => {
+export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const navigate = useNavigate()
-  const { language, setLanguage, t } = useLanguage()
+  const { t } = useLanguage()
 
   const navItems = [
     { to: "/", label: t("overview"), icon: <BarChart3 size={18} /> },
@@ -54,22 +55,7 @@ export const Sidebar = ({ isOpen, isCollapsed, onClose, onToggleCollapse }: Side
       
       {/* Language Switcher */}
       <div className="sidebar__language">
-        <Globe size={16} />
-        <button
-          type="button"
-          className={language === "mk" ? "lang-btn lang-btn--active" : "lang-btn"}
-          onClick={() => setLanguage("mk")}
-        >
-          MK
-        </button>
-        <span className="lang-separator">|</span>
-        <button
-          type="button"
-          className={language === "en" ? "lang-btn lang-btn--active" : "lang-btn"}
-          onClick={() => setLanguage("en")}
-        >
-          EN
-        </button>
+        <LanguageSelector />
       </div>
 
       <div className="sidebar__cta">
